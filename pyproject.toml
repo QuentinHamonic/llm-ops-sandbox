@@ -1,6 +1,6 @@
 [project]
 name = "llm-ops-sandbox"
-version = "0.3.1"
+version = "0.4.0"
 description = "Minimal observable LLM serving sandbox with FastAPI, Prometheus and Docker Compose."
 requires-python = ">=3.11"
 license = "Apache-2.0"
@@ -21,6 +21,9 @@ dev = [
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = [
+  "integration: tests that call optional local services such as Ollama",
+]
 
 [tool.ruff]
 line-length = 100

@@ -8,7 +8,7 @@ from app.metrics import LLM_REQUEST_COUNT, MetricsMiddleware, metrics_response
 
 app = FastAPI(
     title="LLM Ops Sandbox",
-    version="0.3.1",
+    version="0.4.0",
     summary="API locale pour experimenter une stack LLM Ops observable.",
     description=(
         "LLM Ops Sandbox expose une API FastAPI minimale avec un backend LLM mock "
@@ -37,6 +37,16 @@ class ChatResponse(BaseModel):
         description="Backend utilise pour produire la reponse.",
         examples=["mock"],
     )
+
+
+class BackendStatusResponse(BaseModel):
+    backend: str = Field(description="Backend configure.", examples=["mock"])
+    available: bool = Field(description="Disponibilite observee du backend.")
+    model: str = Field(
+        description="Modele configure ou nom logique du backend.",
+        examples=["mistral:latest"],
+    )
+    detail: str = Field(description="Diagnostic court sans prompt, reponse ou secret.")
 
 
 @app.get(
@@ -83,6 +93,37 @@ async def chat(payload: ChatRequest) -> ChatResponse:
 
     LLM_REQUEST_COUNT.labels(backend.name, "success").inc()
     return ChatResponse(reply=reply, backend=backend.name)
+
+
+@app.get(
+    "/backend/status",
+    response_model=BackendStatusResponse,
+    tags=["Backend"],
+    summary="Verifier le statut non-generatif du backend LLM",
+    description=(
+        "Retourne un diagnostic court du backend configure. Pour Ollama, ce endpoint verifie "
+        "`/api/tags` sans envoyer de prompt utilisateur au modele."
+    ),
+)
+async def backend_status() -> BackendStatusResponse:
+    settings = get_settings()
+    backend = build_backend(settings)
+    try:
+        status = await backend.status()
+    except LLMBackendError as exc:
+        return BackendStatusResponse(
+            backend=backend.name,
+            available=False,
+            model=settings.ollama_model if backend.name == "ollama" else backend.name,
+            detail=str(exc),
+        )
+
+    return BackendStatusResponse(
+        backend=status.name,
+        available=status.available,
+        model=status.model,
+        detail=status.detail,
+    )
 
 
 @app.get(

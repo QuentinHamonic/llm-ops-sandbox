@@ -2,7 +2,7 @@
 
 > Fichier genere par `python scripts/export_api_docs.py`. Ne pas modifier a la main.
 
-Version API: `0.3.1`
+Version API: `0.4.0`
 
 LLM Ops Sandbox expose une API FastAPI minimale avec un backend LLM mock par defaut, un backend Ollama optionnel et des metriques Prometheus. Le projet privilegie la reproductibilite, l'observabilite et la confidentialite.
 
@@ -10,11 +10,22 @@ LLM Ops Sandbox expose une API FastAPI minimale avec un backend LLM mock par def
 
 | Methode | Chemin | Resume |
 | --- | --- | --- |
+| GET | `/backend/status` | Verifier le statut non-generatif du backend LLM |
 | POST | `/chat` | Envoyer un message au backend LLM configure |
 | GET | `/health` | Verifier que l'API est vivante |
 | GET | `/metrics` | Exposer les metriques Prometheus |
 
 ## Details
+
+## GET `/backend/status`
+
+Retourne un diagnostic court du backend configure. Pour Ollama, ce endpoint verifie `/api/tags` sans envoyer de prompt utilisateur au modele.
+
+Tags: `Backend`
+
+Reponses documentees:
+
+- `200`: Successful Response
 
 ## POST `/chat`
 
