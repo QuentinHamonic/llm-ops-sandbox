@@ -15,7 +15,7 @@ Objectif: savoir quoi faire ensuite, ce qui est deja fait, pourquoi on le fait, 
 
 ## Etat global
 
-Statut actuel: **`v0.1.0` pret a taguer**.
+Statut actuel: **`v0.1.0` pret**.
 
 Ce que le projet prouve deja:
 
