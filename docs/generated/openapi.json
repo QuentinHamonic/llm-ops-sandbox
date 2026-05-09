@@ -1,0 +1,147 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "LLM Ops Sandbox",
+    "summary": "API locale pour experimenter une stack LLM Ops observable.",
+    "description": "LLM Ops Sandbox expose une API FastAPI minimale avec un backend LLM mock par defaut, un backend Ollama optionnel et des metriques Prometheus. Le projet privilegie la reproductibilite, l'observabilite et la confidentialite.",
+    "version": "0.3.1"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Verifier que l'API est vivante",
+        "description": "Retourne un statut simple pour les humains, Docker Compose et les futurs probes Kubernetes. Ce endpoint ne contacte pas activement un backend LLM externe.",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Health Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/chat": {
+      "post": {
+        "tags": [
+          "Chat"
+        ],
+        "summary": "Envoyer un message au backend LLM configure",
+        "description": "Utilise le backend `mock` par defaut pour garantir une demo stable. Si `LLM_BACKEND=ollama`, l'API appelle Ollama et retourne `502` si le backend ne repond pas correctement.",
+        "operationId": "chat_chat_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Requete invalide, par exemple message vide ou absent."
+          },
+          "502": {
+            "description": "Backend LLM configure indisponible ou reponse inutilisable."
+          }
+        }
+      }
+    },
+    "/metrics": {
+      "get": {
+        "tags": [
+          "Observability"
+        ],
+        "summary": "Exposer les metriques Prometheus",
+        "description": "Expose les compteurs et histogrammes Prometheus. Les labels doivent rester bornes et ne jamais contenir les prompts, reponses, secrets ou identifiants utilisateur.",
+        "operationId": "metrics_metrics_get",
+        "responses": {
+          "200": {
+            "description": "Metriques Prometheus au format texte.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "# HELP http_requests_total Total HTTP requests.\n# TYPE http_requests_total counter\n"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ChatRequest": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "maxLength": 4000,
+            "minLength": 1,
+            "title": "Message",
+            "description": "Message utilisateur envoye au backend LLM configure.",
+            "examples": [
+              "Bonjour, explique moi le role du backend mock."
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "title": "ChatRequest"
+      },
+      "ChatResponse": {
+        "properties": {
+          "reply": {
+            "type": "string",
+            "title": "Reply",
+            "description": "Reponse generee par le backend LLM.",
+            "examples": [
+              "Mock reply: the local API is running. Received 42 characters."
+            ]
+          },
+          "backend": {
+            "type": "string",
+            "title": "Backend",
+            "description": "Backend utilise pour produire la reponse.",
+            "examples": [
+              "mock"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "reply",
+          "backend"
+        ],
+        "title": "ChatResponse"
+      }
+    }
+  }
+}

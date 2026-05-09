@@ -3,7 +3,7 @@
 Demonstrateur minimal pour explorer l'exploitation d'un service LLM auto-heberge:
 API FastAPI, backend mock par defaut, Ollama optionnel, metriques Prometheus et dashboard Grafana.
 
-Le but de `v0.3.0` n'est pas de prouver une infrastructure production complete. Le but est de poser une base fiable, observable, testable et facile a expliquer.
+Le but de `v0.3.1` n'est pas de prouver une infrastructure production complete. Le but est de poser une base fiable, observable, testable et facile a expliquer.
 
 ## Demarrage local
 
@@ -87,7 +87,32 @@ Elle lance:
 - `ruff check .`
 - `ruff format --check .`
 - `pytest`
+- `python scripts/export_api_docs.py --check`
 - `docker compose config` avec une configuration Docker temporaire.
+
+## Documentation API generee
+
+FastAPI expose deja la documentation interactive quand l'API tourne:
+
+- Swagger UI: http://localhost:8000/docs
+- OpenAPI JSON: http://localhost:8000/openapi.json
+
+Pour aider un lecteur externe a comprendre l'API sans lancer le service, le contrat API est aussi exporte dans le repo:
+
+- `docs/generated/openapi.json`: contrat OpenAPI complet.
+- `docs/generated/api.md`: resume Markdown lisible des endpoints.
+
+Regenerer la documentation API:
+
+```powershell
+python scripts/export_api_docs.py
+```
+
+Verifier que la documentation generee est a jour:
+
+```powershell
+python scripts/export_api_docs.py --check
+```
 
 ## Commandes de preuve
 
@@ -138,7 +163,7 @@ Puis ouvrir:
 
 Resultat attendu: Prometheus voit la target API en `UP` et Grafana charge le dashboard `LLM Ops Sandbox`.
 
-## Ce que `v0.3.0` prouve
+## Ce que `v0.3.1` prouve
 
 - Une API IA peut demarrer meme sans backend LLM reel.
 - Les comportements principaux sont testes.
@@ -148,16 +173,20 @@ Resultat attendu: Prometheus voit la target API en `UP` et Grafana charge le das
 - Prometheus scrape l'API et Grafana charge le dashboard provisionne.
 - Les erreurs importantes sont documentees par des runbooks.
 - `/chat` couvre les erreurs de validation et d'indisponibilite backend.
+- La documentation API est generee depuis le contrat OpenAPI FastAPI.
 
 ## Documentation projet
 
 - `docs/roadmap.md`: trajectoire, statut des taches et raisonnement.
 - `docs/architecture.md`: vue logique de la stack.
+- `docs/generated/api.md`: documentation API generee en Markdown.
+- `docs/generated/openapi.json`: contrat OpenAPI exporte.
 - `docs/observability.md`: metriques exposees et questions operationnelles.
 - `docs/backend-status.md`: decision sur le statut backend en `v0.3.0`.
 - `docs/runbook-latency.md`: diagnostic d'une latence API.
 - `docs/runbook-llm-backend-down.md`: diagnostic d'un backend LLM indisponible.
 - `docs/validation-v0.3.0.md`: preuves de validation de `v0.3.0`.
+- `docs/validation-v0.3.1.md`: preuves de validation de la documentation API generee.
 - `docs/validation-v0.2.0.md`: preuves de validation Docker Compose, Prometheus et Grafana.
 - `docs/versioning.md`: convention de versions et tags Git.
 - `docs/contributing.md`: style de contribution, commentaires, tests et Git.

@@ -15,7 +15,7 @@ Objectif: savoir quoi faire ensuite, ce qui est deja fait, pourquoi on le fait, 
 
 ## Etat global
 
-Statut actuel: **`v0.3.0` validee localement**.
+Statut actuel: **`v0.3.1` validee localement**.
 
 Ce que le projet prouve deja:
 
@@ -26,6 +26,7 @@ Ce que le projet prouve deja:
 - Ruff passe.
 - Docker Compose est configure pour API, Prometheus et Grafana.
 - Des commandes de preuve et runbooks operationnels existent.
+- La documentation API est generee depuis OpenAPI.
 - La documentation de base existe.
 
 Ce que le projet ne prouve pas encore:
@@ -116,6 +117,29 @@ Objectif: transformer le socle en preuve de methode.
 - `docs/validation-v0.3.0.md` documente les preuves.
 - Le journal local garde une note de session.
 - Le tag Git `v0.3.0` existe.
+
+## `v0.3.1` - Documentation API generee
+
+Objectif: permettre a un lecteur junior externe de comprendre l'API sans devoir lire tout le code ni lancer le service.
+
+| Statut | Tache | Preuve attendue |
+| --- | --- | --- |
+| Fait | Enrichir OpenAPI FastAPI | Tags, descriptions, schemas et reponses documentees |
+| Fait | Ajouter export OpenAPI | `docs/generated/openapi.json` |
+| Fait | Ajouter resume Markdown API | `docs/generated/api.md` |
+| Fait | Ajouter verification automatique | `python scripts/export_api_docs.py --check` dans `scripts/check.py` |
+| Fait | Documenter la generation API | README |
+
+## Definition of done `v0.3.1`
+
+`v0.3.1` sera consideree complete quand:
+
+- `python scripts/check.py` passe.
+- `docs/generated/openapi.json` est a jour.
+- `docs/generated/api.md` est a jour.
+- Le README explique comment regenerer et verifier la documentation API.
+- `docs/validation-v0.3.1.md` documente les preuves.
+- Le tag Git `v0.3.1` existe.
 
 ## `v0.4.0` - Mode LLM local
 

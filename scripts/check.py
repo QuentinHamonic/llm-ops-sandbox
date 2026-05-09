@@ -27,6 +27,7 @@ def main() -> int:
             ("ruff", [sys.executable, "-m", "ruff", "check", "."], None),
             ("ruff format", [sys.executable, "-m", "ruff", "format", "--check", "."], None),
             ("pytest", [sys.executable, "-m", "pytest"], None),
+            ("api docs", [sys.executable, "scripts/export_api_docs.py", "--check"], None),
             ("docker compose config", ["docker", "compose", "config"], docker_env),
         ]
 
