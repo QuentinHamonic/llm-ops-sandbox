@@ -26,9 +26,11 @@ Ollama est optionnel. Il sert a brancher un vrai modele local sans changer l'int
 
 Prometheus scrape `/metrics` sur l'API. Grafana lit Prometheus et affiche les signaux de base: volume de requetes, latence p95, erreurs et appels backend.
 
+Kubernetes est documente par des manifests minimaux dans `k8s/base/`: `ConfigMap`, `Deployment` et `Service`. Cette couche montre la logique de deploiement, les probes et les resources, mais ne represente pas encore une production.
+
 ## Limites connues
 
-- Pas encore de Kubernetes.
+- Kubernetes minimal seulement, sans production hardening.
 - Pas encore de GitLab CI.
 - Pas encore de Flux CD.
 - Pas encore de vLLM.

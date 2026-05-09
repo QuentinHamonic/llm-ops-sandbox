@@ -15,7 +15,7 @@ Objectif: savoir quoi faire ensuite, ce qui est deja fait, pourquoi on le fait, 
 
 ## Etat global
 
-Statut actuel: **`v0.4.0` validee localement**.
+Statut actuel: **`v0.5.0` en validation**.
 
 Ce que le projet prouve deja:
 
@@ -28,11 +28,12 @@ Ce que le projet prouve deja:
 - Des commandes de preuve et runbooks operationnels existent.
 - La documentation API est generee depuis OpenAPI.
 - Ollama est branche comme backend local optionnel.
+- Des manifests Kubernetes minimaux existent.
 - La documentation de base existe.
 
 Ce que le projet ne prouve pas encore:
 
-- Deploiement Kubernetes.
+- Deploiement Kubernetes production.
 - CI GitLab.
 - GitOps Flux CD.
 - Serving vLLM.
@@ -175,12 +176,27 @@ Objectif: montrer la logique de deploiement sans viser une production reelle.
 
 | Statut | Tache | Preuve attendue |
 | --- | --- | --- |
-| A faire | Choisir outil local: kind, k3d ou minikube | Decision documentee |
-| A faire | Ajouter manifests API | Deployment, Service, ConfigMap |
-| A faire | Ajouter probes | Liveness et readiness sur `/health` |
-| A faire | Ajouter resources requests/limits | Manifests valides |
-| A faire | Ajouter Prometheus scrape en cluster | Note ou manifest |
-| A faire | Documenter commandes kubectl | README ou doc Kubernetes |
+| Fait | Choisir outil local: Docker Desktop Kubernetes | Decision documentee dans `docs/kubernetes-local.md` |
+| Fait | Ajouter manifests API | `k8s/base/` avec Deployment, Service, ConfigMap |
+| Fait | Ajouter probes | Liveness et readiness sur `/health` |
+| Fait | Ajouter resources requests/limits | Manifests valides |
+| Fait | Ajouter Prometheus scrape en cluster | Annotations Prometheus sur Pod et Service |
+| Fait | Documenter commandes kubectl | README et `docs/kubernetes-local.md` |
+
+## Definition of done `v0.5.0`
+
+`v0.5.0` sera consideree complete quand:
+
+- `python scripts/check.py` passe.
+- `python scripts/check_k8s_manifests.py` passe.
+- `kubectl kustomize k8s/base` rend les manifests hors sandbox.
+- Le Deployment declare probes liveness/readiness sur `/health`.
+- Le Deployment declare requests/limits CPU et memoire.
+- Le Service expose l'API sur le port `8000`.
+- Les manifests contiennent une indication de scrape Prometheus.
+- Le README et `docs/kubernetes-local.md` documentent les commandes.
+- `docs/validation-v0.5.0.md` documente les preuves.
+- Le tag Git `v0.5.0` existe.
 
 ## `v0.6.0` - CI/CD
 

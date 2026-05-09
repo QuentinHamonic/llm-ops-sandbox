@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: llm-ops-sandbox-config
+  labels:
+    app.kubernetes.io/name: llm-ops-sandbox
+    app.kubernetes.io/component: api
+data:
+  LLM_BACKEND: "mock"
+  OLLAMA_BASE_URL: "http://host.docker.internal:11434"
+  OLLAMA_MODEL: "mistral:latest"
