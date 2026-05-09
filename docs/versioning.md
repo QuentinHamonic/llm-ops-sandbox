@@ -32,7 +32,7 @@ v0.1.0
 | `v0.3.0` | Documentation operationnelle | commandes de preuve, runbooks latence/backend down, test erreur `/chat`, decision backend status |
 | `v0.3.1` | Documentation API generee | OpenAPI enrichi, export `docs/generated/openapi.json`, resume `docs/generated/api.md`, check automatique |
 | `v0.4.0` | LLM local reel | Ollama teste avec `mistral:latest`, `/backend/status`, modele documente, integration test optionnel, mini benchmark |
-| `v0.5.0` | Kubernetes minimal | manifests API, Service, ConfigMap, probes, resources, commandes kubectl |
+| `v0.5.0` | Kubernetes minimal | manifests API, Service, ConfigMap, probes, resources, validation client-side, commandes kubectl |
 | `v0.6.0` | CI GitLab | lint, tests, build Docker et validations automatiques |
 | `v0.7.0` | GitOps | structure Flux/Kustomize documentee et reproductible |
 | `v0.8.0` | vLLM mode candidature | configuration vLLM, limites GPU documentees, chemin de demo clair |
