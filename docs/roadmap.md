@@ -15,7 +15,7 @@ Objectif: savoir quoi faire ensuite, ce qui est deja fait, pourquoi on le fait, 
 
 ## Etat global
 
-Statut actuel: **`v0.1.0` en preparation**.
+Statut actuel: **`v0.1.0` pret a taguer**.
 
 Ce que le projet prouve deja:
 
@@ -63,7 +63,7 @@ Objectif: avoir une base simple, testable et explicable.
 | Fait | Decouper les tests unitaires | health, chat, config, metrics |
 | Fait | Ajouter pre-commit local | Hook `project-check` vers `scripts/check.py` |
 | Fait | Ajouter regle workaround vs fix perenne | `AGENTS.md` |
-| A faire | Initialiser Git dans `llm-ops-sandbox/` | Premier commit propre du projet public |
+| Fait | Initialiser Git dans `llm-ops-sandbox/` | Commit `2407ab2` |
 
 ## `v0.2.0` - Observabilite locale validee
 
