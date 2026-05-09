@@ -4,7 +4,7 @@
     "title": "LLM Ops Sandbox",
     "summary": "API locale pour experimenter une stack LLM Ops observable.",
     "description": "LLM Ops Sandbox expose une API FastAPI minimale avec un backend LLM mock par defaut, un backend Ollama optionnel et des metriques Prometheus. Le projet privilegie la reproductibilite, l'observabilite et la confidentialite.",
-    "version": "0.3.1"
+    "version": "0.4.0"
   },
   "paths": {
     "/health": {
@@ -71,6 +71,28 @@
         }
       }
     },
+    "/backend/status": {
+      "get": {
+        "tags": [
+          "Backend"
+        ],
+        "summary": "Verifier le statut non-generatif du backend LLM",
+        "description": "Retourne un diagnostic court du backend configure. Pour Ollama, ce endpoint verifie `/api/tags` sans envoyer de prompt utilisateur au modele.",
+        "operationId": "backend_status_backend_status_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BackendStatusResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/metrics": {
       "get": {
         "tags": [
@@ -97,6 +119,44 @@
   },
   "components": {
     "schemas": {
+      "BackendStatusResponse": {
+        "properties": {
+          "backend": {
+            "type": "string",
+            "title": "Backend",
+            "description": "Backend configure.",
+            "examples": [
+              "mock"
+            ]
+          },
+          "available": {
+            "type": "boolean",
+            "title": "Available",
+            "description": "Disponibilite observee du backend."
+          },
+          "model": {
+            "type": "string",
+            "title": "Model",
+            "description": "Modele configure ou nom logique du backend.",
+            "examples": [
+              "mistral:latest"
+            ]
+          },
+          "detail": {
+            "type": "string",
+            "title": "Detail",
+            "description": "Diagnostic court sans prompt, reponse ou secret."
+          }
+        },
+        "type": "object",
+        "required": [
+          "backend",
+          "available",
+          "model",
+          "detail"
+        ],
+        "title": "BackendStatusResponse"
+      },
       "ChatRequest": {
         "properties": {
           "message": {

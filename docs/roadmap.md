@@ -15,7 +15,7 @@ Objectif: savoir quoi faire ensuite, ce qui est deja fait, pourquoi on le fait, 
 
 ## Etat global
 
-Statut actuel: **`v0.3.1` validee localement**.
+Statut actuel: **`v0.4.0` validee localement**.
 
 Ce que le projet prouve deja:
 
@@ -27,6 +27,7 @@ Ce que le projet prouve deja:
 - Docker Compose est configure pour API, Prometheus et Grafana.
 - Des commandes de preuve et runbooks operationnels existent.
 - La documentation API est generee depuis OpenAPI.
+- Ollama est branche comme backend local optionnel.
 - La documentation de base existe.
 
 Ce que le projet ne prouve pas encore:
@@ -147,11 +148,26 @@ Objectif: brancher un vrai modele local sans casser la stabilite du mock.
 
 | Statut | Tache | Preuve attendue |
 | --- | --- | --- |
-| A faire | Tester Ollama depuis l'hote | `/chat` repond avec `backend=ollama` |
-| A faire | Documenter le modele utilise | Taille, raison du choix, limites |
-| A faire | Ajouter un compose profile Ollama si utile | Lancement documente |
-| A faire | Mesurer latence mock vs Ollama | Note courte dans docs |
-| A faire | Ajouter un mini benchmark manuel | Commande + resultat |
+| Fait | Tester Ollama depuis l'hote | `/chat` repond avec `backend=ollama` |
+| Fait | Documenter le modele utilise | `docs/ollama-local.md` |
+| Fait | Ajouter un compose profile Ollama si utile | Decision documentee: host Ollama en `v0.4.0` |
+| Fait | Mesurer latence mock vs Ollama | `docs/benchmark-v0.4.0.md` |
+| Fait | Ajouter un mini benchmark manuel | Commande + resultat |
+| Fait | Ajouter statut backend non-generatif | `GET /backend/status` |
+
+## Definition of done `v0.4.0`
+
+`v0.4.0` sera consideree complete quand:
+
+- `python scripts/check.py` passe.
+- Le backend `mock` reste le comportement par defaut.
+- Ollama repond localement avec `mistral:latest`.
+- `POST /chat` repond avec `backend=ollama` quand `LLM_BACKEND=ollama`.
+- `GET /backend/status` indique l'etat du backend configure sans envoyer de prompt.
+- Le test d'integration Ollama passe quand `OLLAMA_INTEGRATION=1`.
+- Le modele et les limites sont documentes.
+- `docs/validation-v0.4.0.md` documente les preuves.
+- Le tag Git `v0.4.0` existe.
 
 ## `v0.5.0` - Kubernetes minimal
 

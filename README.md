@@ -3,7 +3,7 @@
 Demonstrateur minimal pour explorer l'exploitation d'un service LLM auto-heberge:
 API FastAPI, backend mock par defaut, Ollama optionnel, metriques Prometheus et dashboard Grafana.
 
-Le but de `v0.3.1` n'est pas de prouver une infrastructure production complete. Le but est de poser une base fiable, observable, testable et facile a expliquer.
+Le but de `v0.4.0` n'est pas de prouver une infrastructure production complete. Le but est de poser une base fiable, observable, testable et facile a expliquer.
 
 ## Demarrage local
 
@@ -27,6 +27,7 @@ API locale:
 
 ```powershell
 curl http://localhost:8000/health
+curl http://localhost:8000/backend/status
 curl -X POST http://localhost:8000/chat -H "Content-Type: application/json" -d "{\"message\":\"Bonjour\"}"
 curl http://localhost:8000/metrics
 ```
@@ -55,22 +56,42 @@ Variables disponibles:
 
 ```env
 LLM_BACKEND=mock
-OLLAMA_BASE_URL=http://ollama:11434
-OLLAMA_MODEL=llama3.2:3b
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_MODEL=mistral:latest
 ```
+
+Dans Docker Compose, le backend reste `mock` par defaut. Si l'API conteneurisee doit joindre Ollama sur l'hote Docker Desktop, utiliser `OLLAMA_BASE_URL=http://host.docker.internal:11434`.
 
 Pour tester Ollama depuis la machine hote, utiliser par exemple:
 
 ```powershell
 $env:LLM_BACKEND = "ollama"
 $env:OLLAMA_BASE_URL = "http://localhost:11434"
-$env:OLLAMA_MODEL = "llama3.2:3b"
+$env:OLLAMA_MODEL = "mistral:latest"
 uvicorn app.main:app --reload
 ```
+
+Verifier le backend configure:
+
+```powershell
+curl http://localhost:8000/backend/status
+```
+
+Lancer le test d'integration Ollama reel:
+
+```powershell
+$env:OLLAMA_INTEGRATION = "1"
+$env:OLLAMA_BASE_URL = "http://localhost:11434"
+$env:OLLAMA_MODEL = "mistral:latest"
+pytest -m integration
+```
+
+Ce test est separe du `pytest` standard pour garder la validation quotidienne rapide et independante d'Ollama.
 
 ## Endpoints
 
 - `GET /health`: statut simple pour humain, Docker et futurs probes Kubernetes.
+- `GET /backend/status`: statut non-generatif du backend LLM configure.
 - `POST /chat`: entree `{ "message": "..." }`, sortie `{ "reply": "...", "backend": "mock|ollama" }`.
 - `GET /metrics`: metriques Prometheus.
 
@@ -163,7 +184,7 @@ Puis ouvrir:
 
 Resultat attendu: Prometheus voit la target API en `UP` et Grafana charge le dashboard `LLM Ops Sandbox`.
 
-## Ce que `v0.3.1` prouve
+## Ce que `v0.4.0` prouve
 
 - Une API IA peut demarrer meme sans backend LLM reel.
 - Les comportements principaux sont testes.
@@ -174,6 +195,8 @@ Resultat attendu: Prometheus voit la target API en `UP` et Grafana charge le das
 - Les erreurs importantes sont documentees par des runbooks.
 - `/chat` couvre les erreurs de validation et d'indisponibilite backend.
 - La documentation API est generee depuis le contrat OpenAPI FastAPI.
+- Ollama peut etre utilise comme backend local reel sans casser le backend `mock`.
+- Le statut backend peut etre verifie sans envoyer de prompt au modele.
 
 ## Documentation projet
 
@@ -181,12 +204,15 @@ Resultat attendu: Prometheus voit la target API en `UP` et Grafana charge le das
 - `docs/architecture.md`: vue logique de la stack.
 - `docs/generated/api.md`: documentation API generee en Markdown.
 - `docs/generated/openapi.json`: contrat OpenAPI exporte.
+- `docs/ollama-local.md`: mode Ollama local, modele valide et limites.
+- `docs/benchmark-v0.4.0.md`: comparaison manuelle mock vs Ollama.
 - `docs/observability.md`: metriques exposees et questions operationnelles.
 - `docs/backend-status.md`: decision sur le statut backend en `v0.3.0`.
 - `docs/runbook-latency.md`: diagnostic d'une latence API.
 - `docs/runbook-llm-backend-down.md`: diagnostic d'un backend LLM indisponible.
 - `docs/validation-v0.3.0.md`: preuves de validation de `v0.3.0`.
 - `docs/validation-v0.3.1.md`: preuves de validation de la documentation API generee.
+- `docs/validation-v0.4.0.md`: preuves de validation du mode Ollama local.
 - `docs/validation-v0.2.0.md`: preuves de validation Docker Compose, Prometheus et Grafana.
 - `docs/versioning.md`: convention de versions et tags Git.
 - `docs/contributing.md`: style de contribution, commentaires, tests et Git.

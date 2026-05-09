@@ -26,12 +26,10 @@ Ajouter un vrai check actif d'Ollama maintenant aurait deux risques:
 - ralentir ou fragiliser `/health`;
 - creer une dependance reseau dans une version dont l'objectif principal est la methode et la reproductibilite.
 
-## Evolution prevue
+## Evolution `v0.4.0`
 
-En `v0.4.0`, quand Ollama sera teste comme backend local reel, on pourra ajouter un statut plus precis:
+`v0.4.0` ajoute `GET /backend/status`.
 
-- soit un endpoint `GET /backend/status`;
-- soit une metrique basse cardinalite de disponibilite backend;
-- soit un check separe qui ne bloque pas `/health`.
+Ce endpoint reste separe de `/health` pour eviter de rendre le healthcheck principal dependant d'un service LLM externe. Pour Ollama, il interroge `/api/tags` et ne transmet aucun prompt au modele.
 
-Le choix devra rester compatible avec la confidentialite: aucun prompt, reponse, token, IP ou identifiant utilisateur dans les metriques.
+Le choix reste compatible avec la confidentialite: aucun prompt, reponse, token, IP ou identifiant utilisateur n'est ajoute dans les metriques.

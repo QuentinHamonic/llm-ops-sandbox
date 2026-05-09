@@ -68,4 +68,4 @@ docker compose up -d --build
 
 ## Limites
 
-En `v0.3.0`, Ollama est un backend optionnel documente mais pas encore valide comme mode principal. La validation complete d'Ollama est prevue en `v0.4.0`.
+En `v0.4.0`, Ollama est valide comme backend local optionnel avec `mistral:latest`. Le backend `mock` reste le mode par defaut pour les tests rapides et les demos stables.
