@@ -1,0 +1,8 @@
+repos:
+  - repo: local
+    hooks:
+      - id: project-check
+        name: project check
+        entry: python scripts/check.py
+        language: system
+        pass_filenames: false
