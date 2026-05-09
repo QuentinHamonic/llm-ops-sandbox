@@ -15,7 +15,7 @@ Objectif: savoir quoi faire ensuite, ce qui est deja fait, pourquoi on le fait, 
 
 ## Etat global
 
-Statut actuel: **`v0.2.0` validee localement**.
+Statut actuel: **`v0.3.0` validee localement**.
 
 Ce que le projet prouve deja:
 
@@ -25,6 +25,7 @@ Ce que le projet prouve deja:
 - Les tests pytest passent.
 - Ruff passe.
 - Docker Compose est configure pour API, Prometheus et Grafana.
+- Des commandes de preuve et runbooks operationnels existent.
 - La documentation de base existe.
 
 Ce que le projet ne prouve pas encore:
@@ -35,6 +36,7 @@ Ce que le projet ne prouve pas encore:
 - Serving vLLM.
 - Monitoring GPU.
 - Scenario incident/runbook complet.
+- Scenarios de robustesse ou chaos engineering controles.
 
 ## `v0.1.0` - Socle local fiable
 
@@ -95,12 +97,25 @@ Objectif: transformer le socle en preuve de methode.
 
 | Statut | Tache | Preuve attendue |
 | --- | --- | --- |
-| A faire | Ajouter une section "Commandes de preuve" au README | Commandes curl et resultats attendus |
-| A faire | Ajouter un runbook latence API | `docs/runbook-latency.md` |
-| A faire | Ajouter un runbook backend LLM down | `docs/runbook-llm-backend-down.md` |
-| A faire | Ajouter tests d'erreur `/chat` | Cas message vide et backend Ollama down |
-| A faire | Ajouter un endpoint ou metrique backend status | Decision documentee |
-| A faire | Noter une entree de journal locale | Session setup initial resumee, non publique |
+| Fait | Ajouter une section "Commandes de preuve" au README | Commandes curl et resultats attendus |
+| Fait | Ajouter un runbook latence API | `docs/runbook-latency.md` |
+| Fait | Ajouter un runbook backend LLM down | `docs/runbook-llm-backend-down.md` |
+| Fait | Ajouter tests d'erreur `/chat` | Cas message vide et backend Ollama down |
+| Fait | Ajouter un endpoint ou metrique backend status | Decision dans `docs/backend-status.md` |
+| Fait | Noter une entree de journal locale | `docs/journal.md`, ignore par Git |
+
+## Definition of done `v0.3.0`
+
+`v0.3.0` sera consideree complete quand:
+
+- `python scripts/check.py` passe.
+- Le README contient des commandes de preuve avec resultats attendus.
+- Les runbooks latence et backend LLM down existent.
+- `/chat` couvre les erreurs de validation et d'indisponibilite backend.
+- La decision sur le statut backend est documentee.
+- `docs/validation-v0.3.0.md` documente les preuves.
+- Le journal local garde une note de session.
+- Le tag Git `v0.3.0` existe.
 
 ## `v0.4.0` - Mode LLM local
 
@@ -153,6 +168,21 @@ Objectif: aligner le projet avec le poste vise, apres le socle stable.
 | A faire | Ajouter mode vLLM | Doc + config separee |
 | A faire | Ajouter notes GPU/DCGM | Limites honnetes si pas de test GPU |
 
+## `v0.9.0` - Robustesse et chaos engineering local
+
+Objectif: verifier que le service est observable et diagnostiquable quand une brique casse volontairement.
+
+Cette phase doit rester locale, reversible et documentee. Elle ne doit pas ralentir le chemin critique des versions precedentes.
+
+| Statut | Tache | Preuve attendue |
+| --- | --- | --- |
+| A faire | Definir une methode de scenario chaos local | Doc courte avec hypothese, action, signal, rollback |
+| A faire | Simuler backend LLM indisponible | Runbook backend down + metrique/erreur visible |
+| A faire | Simuler API arretee | Prometheus target `down` + procedure de recovery |
+| A faire | Simuler mauvais scrape Prometheus | Diagnostic documente |
+| A faire | Simuler latence API simple | Runbook latence enrichi |
+| A faire | Ajouter un cours prive associe | `docs/cours/chaos-engineering-local.md` |
+
 ## Comment je pense
 
 Cette section sert a montrer le raisonnement, pas seulement la liste de taches.
@@ -180,6 +210,10 @@ Ce projet ne doit pas exposer Mnemis, Evelynn ou mes donnees personnelles. Il se
 ### Principe 6 - Confidentialite par defaut
 
 Les prompts, reponses, logs et metriques doivent etre traites comme des surfaces de fuite potentielles. Le projet doit mesurer le comportement du service sans exposer le contenu utilisateur.
+
+### Principe 7 - Apprentissage asynchrone
+
+Le projet public avance sur son chemin critique. Les exercices personnels, repetitions et manipulations de code servent a renforcer la competence, mais ne doivent pas bloquer une version. Quand une manipulation casse volontairement quelque chose, elle doit etre traitee comme un lab controle ou un futur scenario de robustesse.
 
 ## Definition of done `v0.1.0`
 

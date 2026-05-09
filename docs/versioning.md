@@ -29,7 +29,7 @@ v0.1.0
 | --- | --- | --- |
 | `v0.1.0` | Socle API local observable | FastAPI, mock backend, Ollama optionnel, `/health`, `/chat`, `/metrics`, tests, ruff, Docker Compose configure |
 | `v0.2.0` | Observabilite locale validee | `docker compose up --build`, Prometheus target `UP`, dashboard Grafana verifie, image API runtime-only |
-| `v0.3.0` | Documentation operationnelle | commandes de preuve, runbooks, limites connues, README nettoye |
+| `v0.3.0` | Documentation operationnelle | commandes de preuve, runbooks latence/backend down, test erreur `/chat`, decision backend status |
 | `v0.4.0` | LLM local reel | Ollama teste, modele documente, latence mesuree, mini benchmark |
 | `v0.5.0` | Kubernetes minimal | manifests API, Service, ConfigMap, probes, resources, commandes kubectl |
 | `v0.6.0` | CI GitLab | lint, tests, build Docker et validations automatiques |

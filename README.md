@@ -3,7 +3,7 @@
 Demonstrateur minimal pour explorer l'exploitation d'un service LLM auto-heberge:
 API FastAPI, backend mock par defaut, Ollama optionnel, metriques Prometheus et dashboard Grafana.
 
-Le but de `v0.2.0` n'est pas de prouver une infrastructure production complete. Le but est de poser une base fiable, observable, testable et facile a expliquer.
+Le but de `v0.3.0` n'est pas de prouver une infrastructure production complete. Le but est de poser une base fiable, observable, testable et facile a expliquer.
 
 ## Demarrage local
 
@@ -89,7 +89,56 @@ Elle lance:
 - `pytest`
 - `docker compose config` avec une configuration Docker temporaire.
 
-## Ce que `v0.2.0` prouve
+## Commandes de preuve
+
+Ces commandes permettent de prouver rapidement que le socle local fonctionne.
+
+Verifier l'API:
+
+```powershell
+curl http://localhost:8000/health
+```
+
+Resultat attendu: `status` vaut `ok` et `llm_backend` vaut `mock` par defaut.
+
+Tester le chat mock:
+
+```powershell
+curl -X POST http://localhost:8000/chat -H "Content-Type: application/json" -d "{\"message\":\"Bonjour\"}"
+```
+
+Resultat attendu: la reponse contient `backend: "mock"` et un champ `reply`.
+
+Verifier la validation d'entree:
+
+```powershell
+curl -X POST http://localhost:8000/chat -H "Content-Type: application/json" -d "{\"message\":\"\"}"
+```
+
+Resultat attendu: FastAPI retourne une erreur `422`.
+
+Verifier les metriques:
+
+```powershell
+curl http://localhost:8000/metrics
+```
+
+Resultat attendu: la sortie contient au moins `http_requests_total` et `http_request_duration_seconds`.
+
+Verifier la stack d'observabilite:
+
+```powershell
+docker compose up -d --build
+```
+
+Puis ouvrir:
+
+- Prometheus targets: http://localhost:9090/targets
+- Grafana: http://localhost:3000 avec `admin` / `admin`
+
+Resultat attendu: Prometheus voit la target API en `UP` et Grafana charge le dashboard `LLM Ops Sandbox`.
+
+## Ce que `v0.3.0` prouve
 
 - Une API IA peut demarrer meme sans backend LLM reel.
 - Les comportements principaux sont testes.
@@ -97,12 +146,18 @@ Elle lance:
 - Le projet est reproductible par commandes courtes.
 - Docker Compose lance API, Prometheus et Grafana.
 - Prometheus scrape l'API et Grafana charge le dashboard provisionne.
+- Les erreurs importantes sont documentees par des runbooks.
+- `/chat` couvre les erreurs de validation et d'indisponibilite backend.
 
 ## Documentation projet
 
 - `docs/roadmap.md`: trajectoire, statut des taches et raisonnement.
 - `docs/architecture.md`: vue logique de la stack.
 - `docs/observability.md`: metriques exposees et questions operationnelles.
+- `docs/backend-status.md`: decision sur le statut backend en `v0.3.0`.
+- `docs/runbook-latency.md`: diagnostic d'une latence API.
+- `docs/runbook-llm-backend-down.md`: diagnostic d'un backend LLM indisponible.
+- `docs/validation-v0.3.0.md`: preuves de validation de `v0.3.0`.
 - `docs/validation-v0.2.0.md`: preuves de validation Docker Compose, Prometheus et Grafana.
 - `docs/versioning.md`: convention de versions et tags Git.
 - `docs/contributing.md`: style de contribution, commentaires, tests et Git.

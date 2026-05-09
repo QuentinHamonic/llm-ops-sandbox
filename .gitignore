@@ -12,6 +12,7 @@ build/
 # Local private documentation
 docs/journal.md
 docs/interview-notes.md
+docs/cours/
 notes/
 private/
 captures/raw/

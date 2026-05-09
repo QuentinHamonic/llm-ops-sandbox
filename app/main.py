@@ -5,7 +5,7 @@ from app.config import get_settings
 from app.llm import LLMBackendError, build_backend
 from app.metrics import LLM_REQUEST_COUNT, MetricsMiddleware, metrics_response
 
-app = FastAPI(title="LLM Ops Sandbox", version="0.2.0")
+app = FastAPI(title="LLM Ops Sandbox", version="0.3.0")
 app.add_middleware(MetricsMiddleware)
 
 
