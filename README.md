@@ -3,7 +3,7 @@
 Demonstrateur minimal pour explorer l'exploitation d'un service LLM auto-heberge:
 API FastAPI, backend mock par defaut, Ollama optionnel, metriques Prometheus et dashboard Grafana.
 
-Le but de `v0.1.0` n'est pas de prouver une infrastructure production complete. Le but est de poser une base fiable, observable, testable et facile a expliquer.
+Le but de `v0.2.0` n'est pas de prouver une infrastructure production complete. Le but est de poser une base fiable, observable, testable et facile a expliquer.
 
 ## Demarrage local
 
@@ -89,18 +89,21 @@ Elle lance:
 - `pytest`
 - `docker compose config` avec une configuration Docker temporaire.
 
-## Ce que `v0.1.0` prouve
+## Ce que `v0.2.0` prouve
 
 - Une API IA peut demarrer meme sans backend LLM reel.
 - Les comportements principaux sont testes.
 - Les metriques sont exposees pour Prometheus.
 - Le projet est reproductible par commandes courtes.
+- Docker Compose lance API, Prometheus et Grafana.
+- Prometheus scrape l'API et Grafana charge le dashboard provisionne.
 
 ## Documentation projet
 
 - `docs/roadmap.md`: trajectoire, statut des taches et raisonnement.
 - `docs/architecture.md`: vue logique de la stack.
 - `docs/observability.md`: metriques exposees et questions operationnelles.
+- `docs/validation-v0.2.0.md`: preuves de validation Docker Compose, Prometheus et Grafana.
 - `docs/versioning.md`: convention de versions et tags Git.
 - `docs/contributing.md`: style de contribution, commentaires, tests et Git.
 - `docs/privacy-and-ethics.md`: regles de confidentialite, donnees, logs, metriques et usage responsable.

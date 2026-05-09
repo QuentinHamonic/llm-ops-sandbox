@@ -15,7 +15,7 @@ Objectif: savoir quoi faire ensuite, ce qui est deja fait, pourquoi on le fait, 
 
 ## Etat global
 
-Statut actuel: **`v0.1.0` pret**.
+Statut actuel: **`v0.2.0` validee localement**.
 
 Ce que le projet prouve deja:
 
@@ -71,9 +71,23 @@ Objectif: prouver que la stack Docker Compose tourne vraiment avec API, Promethe
 
 | Statut | Tache | Preuve attendue |
 | --- | --- | --- |
-| A faire | Lancer vraiment `docker compose up --build` | API, Prometheus et Grafana accessibles |
-| A faire | Verifier scrape Prometheus | Target API `UP` dans Prometheus |
-| A faire | Faire une capture ou note Grafana | Dashboard requetes/latence/erreurs verifie |
+| Fait | Lancer vraiment `docker compose up --build` | API, Prometheus et Grafana accessibles |
+| Fait | Verifier scrape Prometheus | Target API `UP` dans Prometheus |
+| Fait | Faire une capture ou note Grafana | `docs/validation-v0.2.0.md` |
+
+## Definition of done `v0.2.0`
+
+`v0.2.0` sera consideree complete quand:
+
+- `python scripts/check.py` passe.
+- `docker compose up -d --build` lance API, Prometheus et Grafana.
+- `GET /health` retourne `status=ok`.
+- `POST /chat` fonctionne avec `backend=mock`.
+- `GET /metrics` expose les metriques HTTP.
+- Prometheus voit la target API en `up`.
+- Grafana repond et charge le dashboard `LLM Ops Sandbox`.
+- `docs/validation-v0.2.0.md` documente les preuves.
+- Le tag Git `v0.2.0` existe.
 
 ## `v0.3.0` - Qualite et comprehension
 
