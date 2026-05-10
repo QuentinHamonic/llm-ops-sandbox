@@ -47,6 +47,11 @@ def main() -> int:
         "api-docs-check",
         "python scripts/export_api_docs.py --check",
     )
+    assert_job_script_contains(
+        config,
+        "github-actions-static-check",
+        "python scripts/check_github_actions.py",
+    )
     assert_job_script_contains(config, "compose-config", "docker compose config")
     assert_job_script_contains(config, "k8s-static-check", "python scripts/check_k8s_manifests.py")
     assert_job_script_contains(

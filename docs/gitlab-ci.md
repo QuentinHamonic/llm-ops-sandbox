@@ -2,6 +2,8 @@
 
 `v0.6.0` ajoute une pipeline GitLab CI sobre pour automatiser les preuves deja lancees localement.
 
+Depuis `v0.11.0`, GitHub Actions est la CI publique principale preparee pour le repo GitHub. GitLab CI reste conservee pour un miroir GitLab, parce que le poste cible cite explicitement GitLab CI.
+
 Cette CI ne remplace pas Git et ne pretend pas etre une chaine de production complete. Elle verifie que chaque changement pousse reste testable, formate, documente et construisible.
 
 ## Pipeline
@@ -13,6 +15,7 @@ La pipeline est definie dans `.gitlab-ci.yml`.
 | `lint` | `lint` | Verifier `ruff check .` et `ruff format --check .` |
 | `test` | `test` | Lancer les tests rapides avec `pytest` |
 | `validate` | `api-docs-check` | Verifier que la documentation API generee est a jour |
+| `validate` | `github-actions-static-check` | Verifier le workflow GitHub Actions |
 | `validate` | `compose-config` | Verifier que `compose.yml` est syntaxiquement coherent |
 | `validate` | `k8s-static-check` | Verifier les invariants Kubernetes attendus par le projet |
 | `validate` | `k8s-overlays-static-check` | Verifier les overlays backend Kubernetes |
@@ -38,6 +41,17 @@ La CI reste volontairement simple:
 - pas de test Ollama obligatoire.
 
 Les tests d'integration Ollama restent locaux et optionnels car ils dependent d'un service externe au job CI.
+
+## Miroir GitLab
+
+Le mode recommande en `v0.11.0`:
+
+```txt
+GitHub = source principale
+GitLab = miroir aval pour executer GitLab CI
+```
+
+Le miroir evite de maintenir deux historiques Git. La documentation detaillee est dans `docs/ci-mirror.md`.
 
 ## Secrets
 

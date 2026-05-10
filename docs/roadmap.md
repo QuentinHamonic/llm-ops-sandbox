@@ -15,7 +15,7 @@ Objectif: savoir quoi faire ensuite, ce qui est deja fait, pourquoi on le fait, 
 
 ## Etat global
 
-Statut actuel: **`v0.10.0` en validation**.
+Statut actuel: **`v0.11.0` en validation**.
 
 Cap cible: rendre le projet credible pour une trajectoire **AI DevOps / Infrastructure / Optimisation**. Le projet ne pretend pas remplacer une experience production a grande echelle, mais il doit prouver une methode: concevoir, deployer, observer, automatiser, diagnostiquer et documenter une petite plateforme LLM Ops reproductible.
 
@@ -38,6 +38,8 @@ Ce que le projet prouve deja:
 - Un serveur vLLM reel a ete valide en Docker avec GPU NVIDIA local.
 - Un exporter GPU local expose des metriques `nvidia-smi` pour Prometheus.
 - Un dashboard Grafana GPU local existe.
+- Une CI GitHub Actions est configuree.
+- Une strategie de miroir GitLab CI est documentee.
 - La documentation de base existe.
 
 Ce que le projet ne prouve pas encore:
@@ -45,7 +47,7 @@ Ce que le projet ne prouve pas encore:
 - Deploiement Kubernetes production.
 - Serving vLLM GPU dans Kubernetes.
 - Monitoring GPU Kubernetes/DCGM.
-- GitLab CI executee sur une vraie forge.
+- CI distante executee sur une vraie forge.
 - Flux CD reellement installe et connecte a un depot distant.
 - Rollback automatise ou procedure GitOps testee.
 - Autoscaling, scheduling GPU ou quotas.
@@ -61,7 +63,7 @@ Cette section traduit la roadmap en competences proches du poste vise.
 | --- | --- | --- |
 | Serving LLM | Ollama reel valide, vLLM reel valide en Docker GPU | Stabiliser image/runtime vLLM puis tester chemin Kubernetes |
 | Kubernetes | API deployee localement, overlays backend | Tester chemin GPU et rollback |
-| CI/CD | GitLab CI decrite et validee statiquement | Executer la CI sur une forge reelle |
+| CI/CD | GitHub Actions configuree, GitLab CI conservee pour miroir | Executer les pipelines apres publication distante |
 | GitOps Flux | Manifests Flux prepares | Installer Flux et reconciler depuis GitHub/GitLab |
 | Observabilite | Prometheus/Grafana API + GPU local | Ajouter alerting et monitoring Kubernetes/DCGM |
 | Performance | Mini benchmark mock/Ollama/vLLM indicatif | Ajouter mesures tokens/sec et charge simple |
@@ -393,28 +395,34 @@ Objectif: ajouter une observabilite GPU exploitable, proche des besoins AI DevOp
 - `docs/validation-v0.10.0.md` documente les preuves.
 - Le tag Git `v0.10.0` existe.
 
-## `v0.11.0` - CI reelle sur forge distante
+## `v0.11.0` - CI GitHub et miroir GitLab
 
-Objectif: passer d'une CI configuree localement a une CI executee sur une forge reelle.
+Objectif: passer d'une CI uniquement locale a une configuration publiable sur GitHub, avec GitLab CI conservee pour un miroir.
 
-Le poste cite GitLab CI. Si le projet est publie sur GitHub d'abord, GitHub Actions peut servir de preuve publique complementaire, mais la documentation doit garder la difference claire.
+Le poste cite GitLab CI. Le projet utilise GitHub comme forge publique principale, mais garde `.gitlab-ci.yml` pour montrer la competence cible et permettre un miroir GitLab.
 
 | Statut | Tache | Preuve attendue |
 | --- | --- | --- |
-| A faire | Publier le repo distant | URL GitHub ou GitLab documentee |
-| A faire | Executer une pipeline reelle | Lien ou note de run vert |
-| A faire | Ajouter GitHub Actions si GitHub est choisi | Workflow lint/test/check/build |
-| A faire | Conserver `.gitlab-ci.yml` comme competence cible | Doc expliquant l'equivalence GitLab/GitHub |
-| A faire | Documenter variables/secrets CI | Aucun secret commite |
-| A faire | Documenter rollback CI | Procedure courte |
+| Fait | Ajouter GitHub Actions | `.github/workflows/ci.yml` |
+| Fait | Ajouter validation statique GitHub Actions | `python scripts/check_github_actions.py` |
+| Fait | Conserver `.gitlab-ci.yml` comme competence cible | GitLab CI verifie aussi le workflow GitHub |
+| Fait | Documenter strategie miroir | `docs/ci-mirror.md` |
+| Fait | Documenter variables/secrets CI | Aucun secret commite |
+| Fait | Documenter rollback CI | `docs/ci-mirror.md` |
+| A faire hors repo | Publier le repo distant | URL GitHub documentee apres creation |
+| A faire hors repo | Executer une pipeline reelle | Lien ou note de run vert apres push |
 
 ## Definition of done `v0.11.0`
 
-`v0.11.0` sera consideree complete quand:
+`v0.11.0` sera consideree complete cote repo quand:
 
-- Une CI distante a ete executee avec succes.
-- Le README indique comment lire la CI.
+- GitHub Actions est configure.
+- La structure GitHub Actions est validee localement.
+- GitLab CI reste disponible pour un miroir.
+- La strategie GitHub/GitLab mirror est documentee.
+- Le README indique comment lire les CI.
 - Les secrets CI sont documentes sans etre exposes.
+- Les limites d'execution distante sont explicites tant que le repo public n'est pas pousse.
 - Le tag Git `v0.11.0` existe.
 
 ## `v0.12.0` - Flux CD reel

@@ -2,7 +2,7 @@
 
 > Fichier genere par `python scripts/export_api_docs.py`. Ne pas modifier a la main.
 
-Version API: `0.10.0`
+Version API: `0.11.0`
 
 LLM Ops Sandbox expose une API FastAPI minimale avec un backend LLM mock par defaut, des backends Ollama/vLLM optionnels et des metriques Prometheus. Le projet privilegie la reproductibilite, l'observabilite et la confidentialite.
 
