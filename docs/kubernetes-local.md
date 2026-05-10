@@ -36,7 +36,7 @@ k8s/base/
 ## Construire l'image locale
 
 ```powershell
-docker build -t llm-ops-sandbox-api:0.8.0 .
+docker build -t llm-ops-sandbox-api:0.8.1 .
 ```
 
 ## Valider les manifests dans le projet
@@ -46,6 +46,12 @@ python scripts/check_k8s_manifests.py
 ```
 
 Cette commande verifie les invariants attendus par le projet: image, probes, resources, Service et annotations Prometheus.
+
+Les overlays backend sont valides par:
+
+```powershell
+python scripts/check_k8s_overlays.py
+```
 
 ## Rendre les manifests sans cluster actif
 
@@ -64,6 +70,34 @@ kubectl config current-context
 kubectl apply -k k8s/base
 kubectl get pods
 kubectl get svc
+```
+
+## Choisir le backend
+
+`k8s/base/` reste le socle stable en `mock`.
+
+Pour changer de backend sans modifier `k8s/base/configmap.yaml`, utiliser les overlays:
+
+```powershell
+kubectl apply -k k8s/overlays/mock
+kubectl apply -k k8s/overlays/ollama
+kubectl apply -k k8s/overlays/vllm
+```
+
+Chaque overlay:
+
+- repart de `k8s/base/`;
+- applique un patch de ConfigMap;
+- applique un patch d'annotation sur le Deployment.
+
+L'annotation `llm-ops-sandbox.io/backend` force Kubernetes a creer un nouveau Pod quand le backend change. Cela evite de modifier le ConfigMap puis d'oublier `kubectl rollout restart`.
+
+Verifier le backend actif:
+
+```powershell
+kubectl rollout status deploy/llm-ops-sandbox-api
+kubectl port-forward svc/llm-ops-sandbox-api 8000:8000
+Invoke-RestMethod http://localhost:8000/backend/status
 ```
 
 ## Tester l'API dans le cluster
@@ -86,13 +120,13 @@ curl http://localhost:8000/metrics
 
 ```powershell
 kubectl delete -k k8s/base
+kubectl delete -k k8s/overlays/vllm
 ```
 
 ## Limites
 
 - Pas encore de namespace dedie.
 - Pas encore de Helm.
-- Pas encore de GitOps Flux.
 - Pas encore de Prometheus Operator ou ServiceMonitor.
 - Pas encore de secrets Kubernetes.
 - L'image est locale et doit etre construite sur la machine avant application.

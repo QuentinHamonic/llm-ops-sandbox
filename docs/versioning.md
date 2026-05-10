@@ -36,6 +36,7 @@ v0.1.0
 | `v0.6.0` | CI GitLab | lint, tests, docs API, Docker Compose, Kubernetes statique, build Docker, secrets et rollback documentes |
 | `v0.7.0` | GitOps | structure Flux locale, Kustomization, exemple HelmRelease, validation statique et limites documentees |
 | `v0.8.0` | vLLM mode candidature | backend OpenAI-compatible, manifests GPU exemples, validation statique, limites GPU/DCGM documentees |
+| `v0.8.1` | Overlays Kubernetes backend | selection Kubernetes `mock`, `ollama`, `vllm` sans modifier la base |
 | `v1.0.0` | Projet presentable en candidature | stack documentee, demos reproductibles, runbooks, tests, CI, Kubernetes/GitOps/vLLM coherents |
 
 ## Commits et tags

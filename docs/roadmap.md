@@ -15,7 +15,7 @@ Objectif: savoir quoi faire ensuite, ce qui est deja fait, pourquoi on le fait, 
 
 ## Etat global
 
-Statut actuel: **`v0.8.0` en validation**.
+Statut actuel: **`v0.8.1` en validation**.
 
 Ce que le projet prouve deja:
 
@@ -32,6 +32,7 @@ Ce que le projet prouve deja:
 - Une pipeline GitLab CI sobre existe.
 - Une structure GitOps Flux locale existe.
 - Un mode vLLM preparatoire existe.
+- Des overlays Kubernetes permettent de choisir le backend sans modifier la base.
 - La documentation de base existe.
 
 Ce que le projet ne prouve pas encore:
@@ -283,6 +284,31 @@ Objectif: documenter et preparer un mode de serving vLLM sans pretendre a un tes
 - `docs/vllm.md` documente variables, GPU, DCGM, confidentialite et limites.
 - `docs/validation-v0.8.0.md` documente les preuves.
 - Le tag Git `v0.8.0` existe.
+
+## `v0.8.1` - Overlays Kubernetes backend
+
+Objectif: rendre le switch Kubernetes `mock` / `ollama` / `vllm` reproductible sans modifier `k8s/base/configmap.yaml` a la main.
+
+| Statut | Tache | Preuve attendue |
+| --- | --- | --- |
+| Fait | Garder `k8s/base` en mock stable | `LLM_BACKEND=mock` |
+| Fait | Ajouter overlay mock | `k8s/overlays/mock` |
+| Fait | Ajouter overlay Ollama | `k8s/overlays/ollama` |
+| Fait | Ajouter overlay vLLM | `k8s/overlays/vllm` |
+| Fait | Declencher rollout par overlay | Annotation Deployment par backend |
+| Fait | Ajouter validation statique overlays | `python scripts/check_k8s_overlays.py` |
+| Fait | Ajouter job CI overlays | `k8s-overlays-static-check` |
+
+## Definition of done `v0.8.1`
+
+`v0.8.1` sera consideree complete quand:
+
+- `python scripts/check.py` passe.
+- `python scripts/check_k8s_overlays.py` passe.
+- Les overlays `mock`, `ollama` et `vllm` existent.
+- `docs/kubernetes-local.md` documente les commandes d'application.
+- `docs/validation-v0.8.1.md` documente les preuves.
+- Le tag Git `v0.8.1` existe.
 
 ## `v0.9.0` - Robustesse et chaos engineering local
 
