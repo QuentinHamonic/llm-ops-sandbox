@@ -3,7 +3,7 @@
 Demonstrateur minimal pour explorer l'exploitation d'un service LLM auto-heberge:
 API FastAPI, backend mock par defaut, Ollama optionnel, metriques Prometheus et dashboard Grafana.
 
-Le but de `v0.7.0` n'est pas de prouver une infrastructure production complete. Le but est de poser une base fiable, observable, testable, validable en CI, explicable en GitOps et facile a expliquer.
+Le but de `v0.8.0` n'est pas de prouver une infrastructure production complete. Le but est de poser une base fiable, observable, testable, validable en CI, explicable en GitOps, preparatoire pour vLLM et facile a expliquer.
 
 ## Demarrage local
 
@@ -58,6 +58,8 @@ Variables disponibles:
 LLM_BACKEND=mock
 OLLAMA_BASE_URL=http://localhost:11434
 OLLAMA_MODEL=mistral:latest
+VLLM_BASE_URL=http://localhost:8001/v1
+VLLM_MODEL=TinyLlama/TinyLlama-1.1B-Chat-v1.0
 ```
 
 Dans Docker Compose, le backend reste `mock` par defaut. Si l'API conteneurisee doit joindre Ollama sur l'hote Docker Desktop, utiliser `OLLAMA_BASE_URL=http://host.docker.internal:11434`.
@@ -88,11 +90,22 @@ pytest -m integration
 
 Ce test est separe du `pytest` standard pour garder la validation quotidienne rapide et independante d'Ollama.
 
+Pour preparer un backend vLLM OpenAI-compatible:
+
+```powershell
+$env:LLM_BACKEND = "vllm"
+$env:VLLM_BASE_URL = "http://localhost:8001/v1"
+$env:VLLM_MODEL = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
+uvicorn app.main:app --reload
+```
+
+Ce mode suppose qu'un serveur vLLM compatible OpenAI tourne deja. Le projet ne lance pas vLLM automatiquement.
+
 ## Endpoints
 
 - `GET /health`: statut simple pour humain, Docker et futurs probes Kubernetes.
 - `GET /backend/status`: statut non-generatif du backend LLM configure.
-- `POST /chat`: entree `{ "message": "..." }`, sortie `{ "reply": "...", "backend": "mock|ollama" }`.
+- `POST /chat`: entree `{ "message": "..." }`, sortie `{ "reply": "...", "backend": "mock|ollama|vllm" }`.
 - `GET /metrics`: metriques Prometheus.
 
 ## Qualite locale
@@ -111,6 +124,7 @@ Elle lance:
 - `python scripts/export_api_docs.py --check`
 - `python scripts/check_gitlab_ci.py`
 - `python scripts/check_gitops_manifests.py`
+- `python scripts/check_vllm_manifests.py`
 - `docker compose config` avec une configuration Docker temporaire.
 - `python scripts/check_k8s_manifests.py`
 
@@ -133,7 +147,7 @@ kubectl kustomize k8s/base
 Construire l'image locale pour un cluster Docker Desktop Kubernetes:
 
 ```powershell
-docker build -t llm-ops-sandbox-api:0.7.0 .
+docker build -t llm-ops-sandbox-api:0.8.0 .
 ```
 
 Appliquer les manifests:
@@ -166,6 +180,18 @@ Cette couche est pedagogique et statique: elle ne deploie pas encore Flux dans u
 
 Documentation detaillee: `docs/gitops.md`.
 
+## vLLM
+
+`v0.8.0` ajoute un mode vLLM preparatoire:
+
+- backend applicatif `LLM_BACKEND=vllm`;
+- appels OpenAI-compatible vers `/chat/completions` et `/models`;
+- manifests exemples dans `k8s/vllm/`;
+- validation statique avec `python scripts/check_vllm_manifests.py`;
+- notes GPU/DCGM dans `docs/vllm.md`.
+
+Ce mode ne lance pas vLLM automatiquement et ne pretend pas valider un GPU local.
+
 ## GitLab CI
 
 `v0.6.0` ajoute une pipeline GitLab CI dans `.gitlab-ci.yml`.
@@ -178,6 +204,7 @@ La pipeline verifie:
 - Configuration Docker Compose.
 - Manifests Kubernetes par validation statique.
 - Manifests GitOps Flux par validation statique.
+- Manifests vLLM par validation statique.
 - Build Docker de l'API.
 
 La CI ne deploie rien automatiquement et n'utilise aucun secret.
@@ -257,7 +284,7 @@ Puis ouvrir:
 
 Resultat attendu: Prometheus voit la target API en `UP` et Grafana charge le dashboard `LLM Ops Sandbox`.
 
-## Ce que `v0.7.0` prouve
+## Ce que `v0.8.0` prouve
 
 - Une API IA peut demarrer meme sans backend LLM reel.
 - Les comportements principaux sont testes.
@@ -275,6 +302,8 @@ Resultat attendu: Prometheus voit la target API en `UP` et Grafana charge le das
 - Les strategies de secrets et rollback sont documentees avant tout deploiement automatique.
 - Le projet montre la logique GitOps Flux sans pretendre a une production.
 - Les manifests GitOps sont validates statiquement et integres a la CI.
+- Le projet prepare un backend vLLM OpenAI-compatible sans casser le mock.
+- Les limites GPU, image vLLM et DCGM sont documentees honnetement.
 
 ## Documentation projet
 
@@ -284,6 +313,7 @@ Resultat attendu: Prometheus voit la target API en `UP` et Grafana charge le das
 - `docs/generated/openapi.json`: contrat OpenAPI exporte.
 - `docs/gitlab-ci.md`: pipeline CI, strategie de secrets, rollback et limites.
 - `docs/gitops.md`: structure Flux locale, secrets, rollback et limites.
+- `docs/vllm.md`: mode vLLM, manifests GPU, DCGM et limites.
 - `docs/kubernetes-local.md`: manifests Kubernetes locaux, commandes et limites.
 - `docs/ollama-local.md`: mode Ollama local, modele valide et limites.
 - `docs/benchmark-v0.4.0.md`: comparaison manuelle mock vs Ollama.
@@ -297,6 +327,7 @@ Resultat attendu: Prometheus voit la target API en `UP` et Grafana charge le das
 - `docs/validation-v0.5.0.md`: preuves de validation Kubernetes minimal.
 - `docs/validation-v0.6.0.md`: preuves de validation CI/CD.
 - `docs/validation-v0.7.0.md`: preuves de validation GitOps Flux.
+- `docs/validation-v0.8.0.md`: preuves de validation vLLM mode candidature.
 - `docs/validation-v0.2.0.md`: preuves de validation Docker Compose, Prometheus et Grafana.
 - `docs/versioning.md`: convention de versions et tags Git.
 - `docs/contributing.md`: style de contribution, commentaires, tests et Git.
@@ -308,4 +339,4 @@ Les notes de journal et de preparation entretien sont conservees localement, mai
 
 ## Prochaines etapes
 
-- Ajouter vLLM en mode candidature.
+- Ajouter scenarios de robustesse et chaos engineering local.

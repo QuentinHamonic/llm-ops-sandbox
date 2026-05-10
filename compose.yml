@@ -5,6 +5,8 @@ services:
       LLM_BACKEND: ${LLM_BACKEND:-mock}
       OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
       OLLAMA_MODEL: ${OLLAMA_MODEL:-mistral:latest}
+      VLLM_BASE_URL: ${VLLM_BASE_URL:-http://host.docker.internal:8001/v1}
+      VLLM_MODEL: ${VLLM_MODEL:-TinyLlama/TinyLlama-1.1B-Chat-v1.0}
     ports:
       - "8000:8000"
 

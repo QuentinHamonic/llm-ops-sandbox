@@ -1,5 +1,5 @@
 from app.config import get_settings
-from app.llm import LLMBackendError, OllamaBackend
+from app.llm import LLMBackendError, OllamaBackend, VLLMBackend
 
 
 def test_backend_status_reports_mock_available(client):
@@ -29,3 +29,22 @@ def test_backend_status_reports_ollama_unavailable_without_prompt(client, monkey
     assert body["available"] is False
     assert body["model"] == "mistral:latest"
     assert "Ollama status check failed" in body["detail"]
+
+
+def test_backend_status_reports_vllm_unavailable_without_prompt(client, monkeypatch):
+    async def fail_status(self):
+        raise LLMBackendError("vLLM status check failed: connection refused")
+
+    monkeypatch.setenv("LLM_BACKEND", "vllm")
+    monkeypatch.setenv("VLLM_MODEL", "TinyLlama/TinyLlama-1.1B-Chat-v1.0")
+    get_settings.cache_clear()
+    monkeypatch.setattr(VLLMBackend, "status", fail_status)
+
+    response = client.get("/backend/status")
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["backend"] == "vllm"
+    assert body["available"] is False
+    assert body["model"] == "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
+    assert "vLLM status check failed" in body["detail"]

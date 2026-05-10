@@ -8,11 +8,11 @@ from app.metrics import LLM_REQUEST_COUNT, MetricsMiddleware, metrics_response
 
 app = FastAPI(
     title="LLM Ops Sandbox",
-    version="0.7.0",
+    version="0.8.0",
     summary="API locale pour experimenter une stack LLM Ops observable.",
     description=(
         "LLM Ops Sandbox expose une API FastAPI minimale avec un backend LLM mock "
-        "par defaut, un backend Ollama optionnel et des metriques Prometheus. "
+        "par defaut, des backends Ollama/vLLM optionnels et des metriques Prometheus. "
         "Le projet privilegie la reproductibilite, l'observabilite et la confidentialite."
     ),
 )
@@ -74,8 +74,8 @@ async def health() -> dict[str, str]:
     summary="Envoyer un message au backend LLM configure",
     description=(
         "Utilise le backend `mock` par defaut pour garantir une demo stable. "
-        "Si `LLM_BACKEND=ollama`, l'API appelle Ollama et retourne `502` si le backend "
-        "ne repond pas correctement."
+        "Si `LLM_BACKEND=ollama` ou `LLM_BACKEND=vllm`, l'API appelle le backend local "
+        "configure et retourne `502` si le backend ne repond pas correctement."
     ),
     responses={
         422: {"description": "Requete invalide, par exemple message vide ou absent."},
@@ -114,7 +114,10 @@ async def backend_status() -> BackendStatusResponse:
         return BackendStatusResponse(
             backend=backend.name,
             available=False,
-            model=settings.ollama_model if backend.name == "ollama" else backend.name,
+            model={
+                "ollama": settings.ollama_model,
+                "vllm": settings.vllm_model,
+            }.get(backend.name, backend.name),
             detail=str(exc),
         )
 

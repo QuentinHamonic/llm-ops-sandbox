@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vllm-openai
+  labels:
+    app.kubernetes.io/name: vllm-openai
+    app.kubernetes.io/component: llm-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: vllm-openai
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: vllm-openai
+        app.kubernetes.io/component: llm-backend
+    spec:
+      containers:
+        - name: vllm-openai
+          image: vllm/vllm-openai:REPLACE_WITH_TESTED_VERSION
+          imagePullPolicy: IfNotPresent
+          args:
+            - "--model"
+            - "$(VLLM_MODEL)"
+            - "--host"
+            - "$(VLLM_HOST)"
+            - "--port"
+            - "$(VLLM_PORT)"
+          envFrom:
+            - configMapRef:
+                name: vllm-openai-config
+          ports:
+            - name: http
+              containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: "1"
+              memory: "4Gi"
+              nvidia.com/gpu: "1"
+            limits:
+              cpu: "4"
+              memory: "16Gi"
+              nvidia.com/gpu: "1"

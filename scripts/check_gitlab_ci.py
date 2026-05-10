@@ -56,6 +56,11 @@ def main() -> int:
     )
     assert_job_script_contains(
         config,
+        "vllm-static-check",
+        "python scripts/check_vllm_manifests.py",
+    )
+    assert_job_script_contains(
+        config,
         "docker-build",
         "docker build -t llm-ops-sandbox-api:$CI_COMMIT_SHORT_SHA .",
     )

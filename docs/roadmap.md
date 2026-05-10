@@ -15,7 +15,7 @@ Objectif: savoir quoi faire ensuite, ce qui est deja fait, pourquoi on le fait, 
 
 ## Etat global
 
-Statut actuel: **`v0.7.0` en validation**.
+Statut actuel: **`v0.8.0` en validation**.
 
 Ce que le projet prouve deja:
 
@@ -31,12 +31,13 @@ Ce que le projet prouve deja:
 - Des manifests Kubernetes minimaux existent.
 - Une pipeline GitLab CI sobre existe.
 - Une structure GitOps Flux locale existe.
+- Un mode vLLM preparatoire existe.
 - La documentation de base existe.
 
 Ce que le projet ne prouve pas encore:
 
 - Deploiement Kubernetes production.
-- Serving vLLM.
+- Serving vLLM GPU reel.
 - Monitoring GPU.
 - Scenario incident/runbook complet.
 - Scenarios de robustesse ou chaos engineering controles.
@@ -261,11 +262,27 @@ Objectif: documenter et preparer un mode de serving vLLM sans pretendre a un tes
 
 | Statut | Tache | Preuve attendue |
 | --- | --- | --- |
-| A faire | Ajouter mode vLLM | Doc + config separee |
-| A faire | Ajouter exemple de deploiement vLLM | Manifests ou compose separes |
-| A faire | Ajouter notes GPU/DCGM | Limites honnetes si pas de test GPU |
-| A faire | Documenter variables vLLM | README ou doc dediee |
-| A faire | Ajouter validation statique vLLM | Script de check si manifests presents |
+| Fait | Ajouter mode vLLM | `LLM_BACKEND=vllm` |
+| Fait | Ajouter exemple de deploiement vLLM | `k8s/vllm/` |
+| Fait | Ajouter notes GPU/DCGM | `docs/vllm.md` |
+| Fait | Documenter variables vLLM | README et `docs/vllm.md` |
+| Fait | Ajouter validation statique vLLM | `python scripts/check_vllm_manifests.py` |
+| Fait | Ajouter job CI vLLM | `vllm-static-check` |
+
+## Definition of done `v0.8.0`
+
+`v0.8.0` sera consideree complete quand:
+
+- `python scripts/check.py` passe.
+- `LLM_BACKEND=vllm` est accepte par la configuration.
+- Le backend vLLM utilise une API OpenAI-compatible sans dependency runtime lourde.
+- Les tests rapides couvrent les erreurs vLLM sans appeler un vrai serveur.
+- `k8s/vllm/` contient des manifests exemples avec demande GPU.
+- `python scripts/check_vllm_manifests.py` passe.
+- `.gitlab-ci.yml` contient `vllm-static-check`.
+- `docs/vllm.md` documente variables, GPU, DCGM, confidentialite et limites.
+- `docs/validation-v0.8.0.md` documente les preuves.
+- Le tag Git `v0.8.0` existe.
 
 ## `v0.9.0` - Robustesse et chaos engineering local
 
