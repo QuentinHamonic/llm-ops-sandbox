@@ -8,7 +8,7 @@ from app.metrics import LLM_REQUEST_COUNT, MetricsMiddleware, metrics_response
 
 app = FastAPI(
     title="LLM Ops Sandbox",
-    version="0.5.0",
+    version="0.6.0",
     summary="API locale pour experimenter une stack LLM Ops observable.",
     description=(
         "LLM Ops Sandbox expose une API FastAPI minimale avec un backend LLM mock "

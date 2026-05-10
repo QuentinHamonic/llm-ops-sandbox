@@ -15,7 +15,7 @@ Objectif: savoir quoi faire ensuite, ce qui est deja fait, pourquoi on le fait, 
 
 ## Etat global
 
-Statut actuel: **`v0.5.0` en validation**.
+Statut actuel: **`v0.6.0` en validation**.
 
 Ce que le projet prouve deja:
 
@@ -29,12 +29,12 @@ Ce que le projet prouve deja:
 - La documentation API est generee depuis OpenAPI.
 - Ollama est branche comme backend local optionnel.
 - Des manifests Kubernetes minimaux existent.
+- Une pipeline GitLab CI sobre existe.
 - La documentation de base existe.
 
 Ce que le projet ne prouve pas encore:
 
 - Deploiement Kubernetes production.
-- CI GitLab.
 - GitOps Flux CD.
 - Serving vLLM.
 - Monitoring GPU.
@@ -206,11 +206,27 @@ GitLab CI ne remplace pas Git. Git sert d'abord a garder un historique clair du 
 
 | Statut | Tache | Preuve attendue |
 | --- | --- | --- |
-| A faire | Ajouter `.gitlab-ci.yml` | Stages lint, test, build |
-| A faire | Ajouter validation Docker build | Job CI ou commande locale |
-| A faire | Ajouter validation manifests Kubernetes | `kubectl dry-run` ou kubeconform |
-| A faire | Documenter strategie de secrets | Note courte |
-| A faire | Documenter rollback attendu | Note courte |
+| Fait | Ajouter `.gitlab-ci.yml` | Stages lint, test, validate, build |
+| Fait | Ajouter validation Docker build | Job `docker-build` |
+| Fait | Ajouter validation manifests Kubernetes | Job `k8s-static-check` |
+| Fait | Ajouter validation Docker Compose | Job `compose-config` |
+| Fait | Ajouter validation statique GitLab CI | `python scripts/check_gitlab_ci.py` |
+| Fait | Documenter strategie de secrets | `docs/gitlab-ci.md` |
+| Fait | Documenter rollback attendu | `docs/gitlab-ci.md` |
+
+## Definition of done `v0.6.0`
+
+`v0.6.0` sera consideree complete quand:
+
+- `python scripts/check.py` passe.
+- `.gitlab-ci.yml` contient lint, test, validations et build Docker.
+- `python scripts/check_gitlab_ci.py` passe.
+- La CI verifie Ruff, Pytest, documentation API generee, Docker Compose et manifests Kubernetes.
+- Le build Docker est present dans la pipeline.
+- La strategie de secrets est documentee.
+- Le rollback attendu est documente.
+- `docs/validation-v0.6.0.md` documente les preuves.
+- Le tag Git `v0.6.0` existe.
 
 ## `v0.7.0` et `v0.8.0` - GitOps et vLLM
 

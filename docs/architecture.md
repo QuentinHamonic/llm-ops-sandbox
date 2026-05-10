@@ -28,10 +28,12 @@ Prometheus scrape `/metrics` sur l'API. Grafana lit Prometheus et affiche les si
 
 Kubernetes est documente par des manifests minimaux dans `k8s/base/`: `ConfigMap`, `Deployment` et `Service`. Cette couche montre la logique de deploiement, les probes et les resources, mais ne represente pas encore une production.
 
+GitLab CI automatise les controles locaux principaux: lint, format, tests, documentation API generee, validation Docker Compose, validation statique Kubernetes et build Docker. Cette couche verifie le projet, mais ne deploie pas encore.
+
 ## Limites connues
 
 - Kubernetes minimal seulement, sans production hardening.
-- Pas encore de GitLab CI.
+- GitLab CI sans deploiement automatique.
 - Pas encore de Flux CD.
 - Pas encore de vLLM.
 - Pas d'authentification: ce projet est un sandbox local.

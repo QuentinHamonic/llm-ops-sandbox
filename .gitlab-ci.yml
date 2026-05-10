@@ -1,0 +1,76 @@
+﻿stages:
+  - lint
+  - test
+  - validate
+  - build
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+cache:
+  paths:
+    - .cache/pip
+
+default:
+  interruptible: true
+
+lint:
+  stage: lint
+  image: python:3.12-slim
+  before_script:
+    - python --version
+    - pip install --upgrade pip
+    - pip install -e ".[dev]"
+  script:
+    - ruff check .
+    - ruff format --check .
+
+test:
+  stage: test
+  image: python:3.12-slim
+  before_script:
+    - python --version
+    - pip install --upgrade pip
+    - pip install -e ".[dev]"
+  script:
+    - pytest
+
+api-docs-check:
+  stage: validate
+  image: python:3.12-slim
+  before_script:
+    - python --version
+    - pip install --upgrade pip
+    - pip install -e ".[dev]"
+  script:
+    - python scripts/export_api_docs.py --check
+
+compose-config:
+  stage: validate
+  image: docker:27-cli
+  script:
+    - docker compose version
+    - docker compose config
+
+k8s-static-check:
+  stage: validate
+  image: python:3.12-slim
+  before_script:
+    - python --version
+    - pip install --upgrade pip
+    - pip install -e ".[dev]"
+  script:
+    - python scripts/check_k8s_manifests.py
+
+docker-build:
+  stage: build
+  image: docker:27-cli
+  services:
+    - name: docker:27-dind
+      command: ["--tls=false"]
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+  script:
+    - docker version
+    - docker build -t llm-ops-sandbox-api:$CI_COMMIT_SHORT_SHA .
