@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: api
-          image: llm-ops-sandbox-api:0.5.0
+          image: llm-ops-sandbox-api:0.6.0
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

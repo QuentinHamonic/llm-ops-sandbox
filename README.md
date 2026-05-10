@@ -3,7 +3,7 @@
 Demonstrateur minimal pour explorer l'exploitation d'un service LLM auto-heberge:
 API FastAPI, backend mock par defaut, Ollama optionnel, metriques Prometheus et dashboard Grafana.
 
-Le but de `v0.5.0` n'est pas de prouver une infrastructure production complete. Le but est de poser une base fiable, observable, testable et facile a expliquer.
+Le but de `v0.6.0` n'est pas de prouver une infrastructure production complete. Le but est de poser une base fiable, observable, testable, validable en CI et facile a expliquer.
 
 ## Demarrage local
 
@@ -109,6 +109,7 @@ Elle lance:
 - `ruff format --check .`
 - `pytest`
 - `python scripts/export_api_docs.py --check`
+- `python scripts/check_gitlab_ci.py`
 - `docker compose config` avec une configuration Docker temporaire.
 - `python scripts/check_k8s_manifests.py`
 
@@ -131,7 +132,7 @@ kubectl kustomize k8s/base
 Construire l'image locale pour un cluster Docker Desktop Kubernetes:
 
 ```powershell
-docker build -t llm-ops-sandbox-api:0.5.0 .
+docker build -t llm-ops-sandbox-api:0.6.0 .
 ```
 
 Appliquer les manifests:
@@ -142,6 +143,23 @@ kubectl port-forward svc/llm-ops-sandbox-api 8000:8000
 ```
 
 Documentation detaillee: `docs/kubernetes-local.md`.
+
+## GitLab CI
+
+`v0.6.0` ajoute une pipeline GitLab CI dans `.gitlab-ci.yml`.
+
+La pipeline verifie:
+
+- Ruff lint et format.
+- Pytest.
+- Documentation API generee.
+- Configuration Docker Compose.
+- Manifests Kubernetes par validation statique.
+- Build Docker de l'API.
+
+La CI ne deploie rien automatiquement en `v0.6.0` et n'utilise aucun secret.
+
+Documentation detaillee: `docs/gitlab-ci.md`.
 
 ## Documentation API generee
 
@@ -216,7 +234,7 @@ Puis ouvrir:
 
 Resultat attendu: Prometheus voit la target API en `UP` et Grafana charge le dashboard `LLM Ops Sandbox`.
 
-## Ce que `v0.5.0` prouve
+## Ce que `v0.6.0` prouve
 
 - Une API IA peut demarrer meme sans backend LLM reel.
 - Les comportements principaux sont testes.
@@ -230,6 +248,8 @@ Resultat attendu: Prometheus voit la target API en `UP` et Grafana charge le das
 - Ollama peut etre utilise comme backend local reel sans casser le backend `mock`.
 - Le statut backend peut etre verifie sans envoyer de prompt au modele.
 - Les manifests Kubernetes minimaux de l'API sont presents et validables.
+- La qualite locale est traduite en pipeline GitLab CI sobre.
+- Les strategies de secrets et rollback sont documentees avant tout deploiement automatique.
 
 ## Documentation projet
 
@@ -237,6 +257,7 @@ Resultat attendu: Prometheus voit la target API en `UP` et Grafana charge le das
 - `docs/architecture.md`: vue logique de la stack.
 - `docs/generated/api.md`: documentation API generee en Markdown.
 - `docs/generated/openapi.json`: contrat OpenAPI exporte.
+- `docs/gitlab-ci.md`: pipeline CI, strategie de secrets, rollback et limites.
 - `docs/kubernetes-local.md`: manifests Kubernetes locaux, commandes et limites.
 - `docs/ollama-local.md`: mode Ollama local, modele valide et limites.
 - `docs/benchmark-v0.4.0.md`: comparaison manuelle mock vs Ollama.
@@ -248,6 +269,7 @@ Resultat attendu: Prometheus voit la target API en `UP` et Grafana charge le das
 - `docs/validation-v0.3.1.md`: preuves de validation de la documentation API generee.
 - `docs/validation-v0.4.0.md`: preuves de validation du mode Ollama local.
 - `docs/validation-v0.5.0.md`: preuves de validation Kubernetes minimal.
+- `docs/validation-v0.6.0.md`: preuves de validation CI/CD.
 - `docs/validation-v0.2.0.md`: preuves de validation Docker Compose, Prometheus et Grafana.
 - `docs/versioning.md`: convention de versions et tags Git.
 - `docs/contributing.md`: style de contribution, commentaires, tests et Git.
@@ -259,6 +281,5 @@ Les notes de journal et de preparation entretien sont conservees localement, mai
 
 ## Prochaines etapes
 
-- Ajouter pipeline GitLab CI.
 - Ajouter Flux CD / GitOps apres stabilisation Kubernetes.
 - Ajouter vLLM en mode candidature.
