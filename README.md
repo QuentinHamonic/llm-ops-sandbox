@@ -3,7 +3,7 @@
 Demonstrateur minimal pour explorer l'exploitation d'un service LLM auto-heberge:
 API FastAPI, backend mock par defaut, Ollama optionnel, metriques Prometheus et dashboard Grafana.
 
-Le but de `v0.8.1` n'est pas de prouver une infrastructure production complete. Le but est de poser une base fiable, observable, testable, validable en CI, explicable en GitOps, preparatoire pour vLLM et facile a expliquer.
+Le but de `v0.9.0` n'est pas de prouver une infrastructure production complete. Le but est de poser une base fiable, observable, testable, validable en CI, explicable en GitOps, et capable d'appeler un serveur vLLM reel sur GPU local.
 
 ## Demarrage local
 
@@ -148,7 +148,7 @@ kubectl kustomize k8s/base
 Construire l'image locale pour un cluster Docker Desktop Kubernetes:
 
 ```powershell
-docker build -t llm-ops-sandbox-api:0.8.1 .
+docker build -t llm-ops-sandbox-api:0.9.0 .
 ```
 
 Appliquer les manifests:
@@ -193,15 +193,28 @@ Documentation detaillee: `docs/gitops.md`.
 
 ## vLLM
 
-`v0.8.0` ajoute un mode vLLM preparatoire:
+`v0.9.0` valide le passage du mode vLLM preparatoire a un serveur vLLM reel sur GPU local:
 
 - backend applicatif `LLM_BACKEND=vllm`;
 - appels OpenAI-compatible vers `/chat/completions` et `/models`;
 - manifests exemples dans `k8s/vllm/`;
 - validation statique avec `python scripts/check_vllm_manifests.py`;
 - notes GPU/DCGM dans `docs/vllm.md`.
+- preuve runtime Docker avec `vllm/vllm-openai`.
 
-Ce mode ne lance pas vLLM automatiquement et ne pretend pas valider un GPU local.
+Le projet ne lance pas vLLM automatiquement quand l'API demarre. Il faut demarrer le serveur vLLM separement, puis configurer l'API avec `LLM_BACKEND=vllm`.
+
+Exemple local GPU Docker:
+
+```powershell
+docker run --rm -d --name llm-ops-vllm-runtime --gpus all -p 8001:8000 --ipc=host vllm/vllm-openai:latest --model TinyLlama/TinyLlama-1.1B-Chat-v1.0 --gpu-memory-utilization 0.60
+$env:LLM_BACKEND = "vllm"
+$env:VLLM_BASE_URL = "http://localhost:8001/v1"
+$env:VLLM_MODEL = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
+uvicorn app.main:app --reload
+```
+
+Documentation detaillee: `docs/vllm-runtime.md`.
 
 ## GitLab CI
 
@@ -296,7 +309,7 @@ Puis ouvrir:
 
 Resultat attendu: Prometheus voit la target API en `UP` et Grafana charge le dashboard `LLM Ops Sandbox`.
 
-## Ce que `v0.8.1` prouve
+## Ce que `v0.9.0` prouve
 
 - Une API IA peut demarrer meme sans backend LLM reel.
 - Les comportements principaux sont testes.
@@ -317,6 +330,10 @@ Resultat attendu: Prometheus voit la target API en `UP` et Grafana charge le das
 - Le projet prepare un backend vLLM OpenAI-compatible sans casser le mock.
 - Les limites GPU, image vLLM et DCGM sont documentees honnetement.
 - Kubernetes peut changer de backend avec des overlays `mock`, `ollama` et `vllm`.
+- Docker voit le GPU NVIDIA local.
+- Un serveur vLLM OpenAI-compatible repond sur la machine locale.
+- L'API FastAPI peut router `/chat` vers `backend=vllm`.
+- La contention GPU avec Ollama est identifiee comme limite operationnelle locale.
 
 ## Documentation projet
 
@@ -327,6 +344,8 @@ Resultat attendu: Prometheus voit la target API en `UP` et Grafana charge le das
 - `docs/gitlab-ci.md`: pipeline CI, strategie de secrets, rollback et limites.
 - `docs/gitops.md`: structure Flux locale, secrets, rollback et limites.
 - `docs/vllm.md`: mode vLLM, manifests GPU, DCGM et limites.
+- `docs/vllm-runtime.md`: execution vLLM reelle sur GPU local, commandes et limites.
+- `docs/benchmark-v0.9.0.md`: mesures indicatives mock/Ollama/vLLM.
 - `docs/kubernetes-local.md`: manifests Kubernetes locaux, commandes et limites.
 - `docs/ollama-local.md`: mode Ollama local, modele valide et limites.
 - `docs/benchmark-v0.4.0.md`: comparaison manuelle mock vs Ollama.
@@ -341,6 +360,8 @@ Resultat attendu: Prometheus voit la target API en `UP` et Grafana charge le das
 - `docs/validation-v0.6.0.md`: preuves de validation CI/CD.
 - `docs/validation-v0.7.0.md`: preuves de validation GitOps Flux.
 - `docs/validation-v0.8.0.md`: preuves de validation vLLM mode candidature.
+- `docs/validation-v0.8.1.md`: preuves de validation des overlays Kubernetes backend.
+- `docs/validation-v0.9.0.md`: preuves de validation vLLM runtime GPU local.
 - `docs/validation-v0.2.0.md`: preuves de validation Docker Compose, Prometheus et Grafana.
 - `docs/versioning.md`: convention de versions et tags Git.
 - `docs/contributing.md`: style de contribution, commentaires, tests et Git.
@@ -352,4 +373,7 @@ Les notes de journal et de preparation entretien sont conservees localement, mai
 
 ## Prochaines etapes
 
+- Ajouter monitoring GPU avec DCGM Exporter ou alternative locale.
+- Executer une CI distante sur GitHub ou GitLab.
+- Installer Flux CD reellement dans un cluster local.
 - Ajouter scenarios de robustesse et chaos engineering local.

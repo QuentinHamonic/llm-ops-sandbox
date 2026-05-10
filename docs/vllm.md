@@ -1,8 +1,8 @@
-# vLLM mode candidature
+# vLLM
 
 `v0.8.0` ajoute un mode vLLM preparatoire.
 
-L'objectif est de montrer comment l'API pourrait appeler un serveur vLLM OpenAI-compatible, et comment un deploiement Kubernetes GPU pourrait etre structure. Cette version ne pretend pas valider un vrai serving GPU local.
+L'objectif initial etait de montrer comment l'API pourrait appeler un serveur vLLM OpenAI-compatible, et comment un deploiement Kubernetes GPU pourrait etre structure. Depuis `v0.9.0`, le projet valide aussi un serveur vLLM reel en Docker avec GPU NVIDIA local.
 
 ## Backend API
 
@@ -56,6 +56,10 @@ Avant un vrai deploiement, il faut remplacer ce placeholder par une version test
 
 Ne pas utiliser une image non pinnee en production.
 
+En validation locale `v0.9.0`, l'image Docker `vllm/vllm-openai:latest` a ete utilisee pour prouver le runtime GPU. Ce choix est acceptable pour un lab local, mais il doit etre remplace par une version pinnee avant toute validation reproductible ou publication de procedure production.
+
+La documentation runtime detaillee est dans `docs/vllm-runtime.md`.
+
 ## Observabilite GPU et DCGM
 
 Pour une vraie plateforme GPU, les signaux a surveiller seraient notamment:
@@ -100,8 +104,8 @@ Ces validations verifient:
 
 ## Limites
 
-- vLLM n'est pas installe localement par le projet.
-- Aucun test GPU n'est lance.
-- Les performances ne sont pas mesurees.
+- vLLM n'est pas installe automatiquement par le projet.
+- Le runtime GPU est valide en Docker local, pas encore dans Kubernetes.
+- Les performances mesurees sont indicatives et non un benchmark de charge.
 - DCGM Exporter n'est pas configure.
 - Le manifest vLLM est un exemple a adapter avant usage reel.

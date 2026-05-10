@@ -37,6 +37,7 @@ v0.1.0
 | `v0.7.0` | GitOps | structure Flux locale, Kustomization, exemple HelmRelease, validation statique et limites documentees |
 | `v0.8.0` | vLLM mode candidature | backend OpenAI-compatible, manifests GPU exemples, validation statique, limites GPU/DCGM documentees |
 | `v0.8.1` | Overlays Kubernetes backend | selection Kubernetes `mock`, `ollama`, `vllm` sans modifier la base |
+| `v0.9.0` | vLLM runtime GPU local | serveur vLLM reel en Docker GPU, API branchee sur `backend=vllm`, limites de contention GPU documentees |
 | `v1.0.0` | Projet presentable en candidature | stack documentee, demos reproductibles, runbooks, tests, CI, Kubernetes/GitOps/vLLM coherents |
 
 ## Commits et tags
