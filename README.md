@@ -3,7 +3,7 @@
 Demonstrateur minimal pour explorer l'exploitation d'un service LLM auto-heberge:
 API FastAPI, backend mock par defaut, Ollama optionnel, metriques Prometheus et dashboard Grafana.
 
-Le but de `v0.6.0` n'est pas de prouver une infrastructure production complete. Le but est de poser une base fiable, observable, testable, validable en CI et facile a expliquer.
+Le but de `v0.7.0` n'est pas de prouver une infrastructure production complete. Le but est de poser une base fiable, observable, testable, validable en CI, explicable en GitOps et facile a expliquer.
 
 ## Demarrage local
 
@@ -110,6 +110,7 @@ Elle lance:
 - `pytest`
 - `python scripts/export_api_docs.py --check`
 - `python scripts/check_gitlab_ci.py`
+- `python scripts/check_gitops_manifests.py`
 - `docker compose config` avec une configuration Docker temporaire.
 - `python scripts/check_k8s_manifests.py`
 
@@ -132,7 +133,7 @@ kubectl kustomize k8s/base
 Construire l'image locale pour un cluster Docker Desktop Kubernetes:
 
 ```powershell
-docker build -t llm-ops-sandbox-api:0.6.0 .
+docker build -t llm-ops-sandbox-api:0.7.0 .
 ```
 
 Appliquer les manifests:
@@ -143,6 +144,27 @@ kubectl port-forward svc/llm-ops-sandbox-api 8000:8000
 ```
 
 Documentation detaillee: `docs/kubernetes-local.md`.
+
+## GitOps local
+
+`v0.7.0` ajoute une structure GitOps Flux dans `gitops/local/`.
+
+Elle contient:
+
+- une source Git Flux;
+- une Kustomization Flux vers `./k8s/base`;
+- un exemple HelmRepository;
+- un exemple HelmRelease monitoring.
+
+Validation:
+
+```powershell
+python scripts/check_gitops_manifests.py
+```
+
+Cette couche est pedagogique et statique: elle ne deploie pas encore Flux dans un cluster.
+
+Documentation detaillee: `docs/gitops.md`.
 
 ## GitLab CI
 
@@ -155,9 +177,10 @@ La pipeline verifie:
 - Documentation API generee.
 - Configuration Docker Compose.
 - Manifests Kubernetes par validation statique.
+- Manifests GitOps Flux par validation statique.
 - Build Docker de l'API.
 
-La CI ne deploie rien automatiquement en `v0.6.0` et n'utilise aucun secret.
+La CI ne deploie rien automatiquement et n'utilise aucun secret.
 
 Documentation detaillee: `docs/gitlab-ci.md`.
 
@@ -234,7 +257,7 @@ Puis ouvrir:
 
 Resultat attendu: Prometheus voit la target API en `UP` et Grafana charge le dashboard `LLM Ops Sandbox`.
 
-## Ce que `v0.6.0` prouve
+## Ce que `v0.7.0` prouve
 
 - Une API IA peut demarrer meme sans backend LLM reel.
 - Les comportements principaux sont testes.
@@ -250,6 +273,8 @@ Resultat attendu: Prometheus voit la target API en `UP` et Grafana charge le das
 - Les manifests Kubernetes minimaux de l'API sont presents et validables.
 - La qualite locale est traduite en pipeline GitLab CI sobre.
 - Les strategies de secrets et rollback sont documentees avant tout deploiement automatique.
+- Le projet montre la logique GitOps Flux sans pretendre a une production.
+- Les manifests GitOps sont validates statiquement et integres a la CI.
 
 ## Documentation projet
 
@@ -258,6 +283,7 @@ Resultat attendu: Prometheus voit la target API en `UP` et Grafana charge le das
 - `docs/generated/api.md`: documentation API generee en Markdown.
 - `docs/generated/openapi.json`: contrat OpenAPI exporte.
 - `docs/gitlab-ci.md`: pipeline CI, strategie de secrets, rollback et limites.
+- `docs/gitops.md`: structure Flux locale, secrets, rollback et limites.
 - `docs/kubernetes-local.md`: manifests Kubernetes locaux, commandes et limites.
 - `docs/ollama-local.md`: mode Ollama local, modele valide et limites.
 - `docs/benchmark-v0.4.0.md`: comparaison manuelle mock vs Ollama.
@@ -270,6 +296,7 @@ Resultat attendu: Prometheus voit la target API en `UP` et Grafana charge le das
 - `docs/validation-v0.4.0.md`: preuves de validation du mode Ollama local.
 - `docs/validation-v0.5.0.md`: preuves de validation Kubernetes minimal.
 - `docs/validation-v0.6.0.md`: preuves de validation CI/CD.
+- `docs/validation-v0.7.0.md`: preuves de validation GitOps Flux.
 - `docs/validation-v0.2.0.md`: preuves de validation Docker Compose, Prometheus et Grafana.
 - `docs/versioning.md`: convention de versions et tags Git.
 - `docs/contributing.md`: style de contribution, commentaires, tests et Git.
@@ -281,5 +308,4 @@ Les notes de journal et de preparation entretien sont conservees localement, mai
 
 ## Prochaines etapes
 
-- Ajouter Flux CD / GitOps apres stabilisation Kubernetes.
 - Ajouter vLLM en mode candidature.

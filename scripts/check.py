@@ -29,6 +29,7 @@ def main() -> int:
             ("pytest", [sys.executable, "-m", "pytest"], None),
             ("api docs", [sys.executable, "scripts/export_api_docs.py", "--check"], None),
             ("gitlab ci", [sys.executable, "scripts/check_gitlab_ci.py"], None),
+            ("gitops manifests", [sys.executable, "scripts/check_gitops_manifests.py"], None),
             ("docker compose config", ["docker", "compose", "config"], docker_env),
             ("kubernetes manifests", [sys.executable, "scripts/check_k8s_manifests.py"], None),
         ]

@@ -30,11 +30,13 @@ Kubernetes est documente par des manifests minimaux dans `k8s/base/`: `ConfigMap
 
 GitLab CI automatise les controles locaux principaux: lint, format, tests, documentation API generee, validation Docker Compose, validation statique Kubernetes et build Docker. Cette couche verifie le projet, mais ne deploie pas encore.
 
+GitOps est represente par des exemples Flux CD dans `gitops/local/`. Flux observe un depot Git et reconcilie `k8s/base/` comme etat voulu. Cette couche est statique et pedagogique en `v0.7.0`: elle documente la logique sans installer Flux dans un cluster.
+
 ## Limites connues
 
 - Kubernetes minimal seulement, sans production hardening.
 - GitLab CI sans deploiement automatique.
-- Pas encore de Flux CD.
+- Flux CD documente, mais pas installe ni reconcilie sur un cluster reel.
 - Pas encore de vLLM.
 - Pas d'authentification: ce projet est un sandbox local.
 

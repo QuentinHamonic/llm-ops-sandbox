@@ -51,6 +51,11 @@ def main() -> int:
     assert_job_script_contains(config, "k8s-static-check", "python scripts/check_k8s_manifests.py")
     assert_job_script_contains(
         config,
+        "gitops-static-check",
+        "python scripts/check_gitops_manifests.py",
+    )
+    assert_job_script_contains(
+        config,
         "docker-build",
         "docker build -t llm-ops-sandbox-api:$CI_COMMIT_SHORT_SHA .",
     )
