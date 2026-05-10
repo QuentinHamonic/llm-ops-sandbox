@@ -52,6 +52,7 @@ Objectif:
 
 - GitLab CI verifie aussi la structure GitHub Actions;
 - les deux CI restent coherentes.
+- `ci-smoke-job` prouve que GitLab detecte au moins un job visible.
 
 ## Strategie miroir
 

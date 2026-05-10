@@ -12,6 +12,7 @@ La pipeline est definie dans `.gitlab-ci.yml`.
 
 | Stage | Job | Objectif |
 | --- | --- | --- |
+| `lint` | `ci-smoke-job` | Prouver que GitLab detecte au moins un job visible |
 | `lint` | `lint-job` | Verifier `ruff check .` et `ruff format --check .` |
 | `test` | `test-job` | Lancer les tests rapides avec `pytest` |
 | `validate` | `api-docs-check-job` | Verifier que la documentation API generee est a jour |
@@ -31,6 +32,8 @@ python scripts/check_gitlab_ci.py
 ```
 
 Les noms de jobs utilisent le suffixe `-job` pour rester explicites et eviter les noms trop generiques.
+
+Un job `ci-smoke-job` tres simple reste present pour diagnostiquer clairement les erreurs de detection de jobs visibles dans GitLab.
 
 ## Strategie choisie
 
