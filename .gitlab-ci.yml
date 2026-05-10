@@ -1,6 +1,7 @@
 stages:
   - lint
   - test
+  - validate
 
 lint:
   stage: lint
@@ -22,3 +23,23 @@ test:
     - pip install -e ".[dev]"
   script:
     - pytest
+
+api_docs_check:
+  stage: validate
+  image: python:3.12-slim
+  before_script:
+    - python --version
+    - pip install --upgrade pip
+    - pip install -e ".[dev]"
+  script:
+    - python scripts/export_api_docs.py --check
+
+k8s_static_check:
+  stage: validate
+  image: python:3.12-slim
+  before_script:
+    - python --version
+    - pip install --upgrade pip
+    - pip install -e ".[dev]"
+  script:
+    - python scripts/check_k8s_manifests.py
