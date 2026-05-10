@@ -30,6 +30,7 @@ def main() -> int:
             ("api docs", [sys.executable, "scripts/export_api_docs.py", "--check"], None),
             ("gitlab ci", [sys.executable, "scripts/check_gitlab_ci.py"], None),
             ("gitops manifests", [sys.executable, "scripts/check_gitops_manifests.py"], None),
+            ("monitoring config", [sys.executable, "scripts/check_monitoring_config.py"], None),
             ("vllm manifests", [sys.executable, "scripts/check_vllm_manifests.py"], None),
             ("kubernetes overlays", [sys.executable, "scripts/check_k8s_overlays.py"], None),
             ("docker compose config", ["docker", "compose", "config"], docker_env),

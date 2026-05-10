@@ -61,6 +61,11 @@ def main() -> int:
     )
     assert_job_script_contains(
         config,
+        "monitoring-static-check",
+        "python scripts/check_monitoring_config.py",
+    )
+    assert_job_script_contains(
+        config,
         "vllm-static-check",
         "python scripts/check_vllm_manifests.py",
     )

@@ -82,6 +82,16 @@ gitops-static-check:
   script:
     - python scripts/check_gitops_manifests.py
 
+monitoring-static-check:
+  stage: validate
+  image: python:3.12-slim
+  before_script:
+    - python --version
+    - pip install --upgrade pip
+    - pip install -e ".[dev]"
+  script:
+    - python scripts/check_monitoring_config.py
+
 vllm-static-check:
   stage: validate
   image: python:3.12-slim

@@ -19,14 +19,34 @@ Objectif: mesurer le comportement du service sans exposer de contenu utilisateur
 | `http_requests_total` | Counter | `method`, `path`, `status` | Combien de requetes arrivent, sur quelles routes, avec quels statuts ? |
 | `http_request_duration_seconds` | Histogram | `method`, `path` | Est-ce que la latence HTTP augmente ? |
 | `llm_requests_total` | Counter | `backend`, `status` | Est-ce que les appels au backend LLM reussissent ou echouent ? |
+| `gpu_exporter_up` | Gauge | Aucun | Est-ce que l'exporter GPU local arrive a lire `nvidia-smi` ? |
+| `gpu_memory_total_bytes` | Gauge | `gpu`, `name` | Quelle est la memoire GPU totale visible ? |
+| `gpu_memory_used_bytes` | Gauge | `gpu`, `name` | Est-ce que la memoire GPU se remplit ? |
+| `gpu_memory_free_bytes` | Gauge | `gpu`, `name` | Reste-t-il assez de memoire GPU pour charger un modele ? |
+| `gpu_utilization_ratio` | Gauge | `gpu`, `name` | Le GPU travaille-t-il pendant le serving LLM ? |
+| `gpu_temperature_celsius` | Gauge | `gpu`, `name` | La temperature GPU reste-t-elle dans une zone saine ? |
+| `gpu_power_draw_watts` | Gauge | `gpu`, `name` | Quelle puissance le GPU consomme-t-il ? |
+| `gpu_power_limit_watts` | Gauge | `gpu`, `name` | Quelle est la limite de puissance observee ? |
 
 ## Ce que la V0.1.0 ne mesure pas encore
 
 - tokens par seconde;
 - duree de generation LLM separee de la latence HTTP;
-- saturation CPU/RAM/GPU;
 - disponibilite Prometheus/Grafana;
 - metriques vLLM natives.
+
+## Monitoring GPU local
+
+`v0.10.0` ajoute un exporter local dans `scripts/gpu_metrics_exporter.py`.
+
+Il est volontairement simple:
+
+- il lit `nvidia-smi`;
+- il expose `/metrics` sur `localhost:9101`;
+- Prometheus le scrape depuis Docker via `host.docker.internal:9101`;
+- les labels restent bornes: index GPU et nom materiel.
+
+Ce choix est adapte au lab local Windows. Pour une plateforme Kubernetes GPU plus industrielle, DCGM Exporter reste une piste a valider dans une version future.
 
 Ces metriques arriveront plus tard, quand elles repondront a une question operationnelle claire.
 

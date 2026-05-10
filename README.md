@@ -3,7 +3,7 @@
 Demonstrateur minimal pour explorer l'exploitation d'un service LLM auto-heberge:
 API FastAPI, backend mock par defaut, Ollama optionnel, metriques Prometheus et dashboard Grafana.
 
-Le but de `v0.9.0` n'est pas de prouver une infrastructure production complete. Le but est de poser une base fiable, observable, testable, validable en CI, explicable en GitOps, et capable d'appeler un serveur vLLM reel sur GPU local.
+Le but de `v0.10.0` n'est pas de prouver une infrastructure production complete. Le but est de poser une base fiable, observable, testable, validable en CI, explicable en GitOps, capable d'appeler un serveur vLLM reel sur GPU local et de surveiller les ressources GPU locales.
 
 ## Demarrage local
 
@@ -124,6 +124,7 @@ Elle lance:
 - `python scripts/export_api_docs.py --check`
 - `python scripts/check_gitlab_ci.py`
 - `python scripts/check_gitops_manifests.py`
+- `python scripts/check_monitoring_config.py`
 - `python scripts/check_vllm_manifests.py`
 - `python scripts/check_k8s_overlays.py`
 - `docker compose config` avec une configuration Docker temporaire.
@@ -148,7 +149,7 @@ kubectl kustomize k8s/base
 Construire l'image locale pour un cluster Docker Desktop Kubernetes:
 
 ```powershell
-docker build -t llm-ops-sandbox-api:0.9.0 .
+docker build -t llm-ops-sandbox-api:0.10.0 .
 ```
 
 Appliquer les manifests:
@@ -216,6 +217,31 @@ uvicorn app.main:app --reload
 
 Documentation detaillee: `docs/vllm-runtime.md`.
 
+## Monitoring GPU local
+
+`v0.10.0` ajoute un exporter GPU local base sur `nvidia-smi`.
+
+Lancer l'exporter depuis l'hote Windows:
+
+```powershell
+python scripts/gpu_metrics_exporter.py
+```
+
+Il expose:
+
+- exporter local: http://localhost:9101/metrics
+- healthcheck: http://localhost:9101/health
+
+Docker Compose configure Prometheus pour scraper cet exporter via:
+
+```txt
+host.docker.internal:9101
+```
+
+Grafana charge aussi un dashboard `LLM Ops GPU`.
+
+Documentation detaillee: `docs/gpu-monitoring.md`.
+
 ## GitLab CI
 
 `v0.6.0` ajoute une pipeline GitLab CI dans `.gitlab-ci.yml`.
@@ -229,6 +255,7 @@ La pipeline verifie:
 - Manifests Kubernetes par validation statique.
 - Overlays Kubernetes backend par validation statique.
 - Manifests GitOps Flux par validation statique.
+- Configuration Prometheus/Grafana GPU par validation statique.
 - Manifests vLLM par validation statique.
 - Build Docker de l'API.
 
@@ -309,7 +336,7 @@ Puis ouvrir:
 
 Resultat attendu: Prometheus voit la target API en `UP` et Grafana charge le dashboard `LLM Ops Sandbox`.
 
-## Ce que `v0.9.0` prouve
+## Ce que `v0.10.0` prouve
 
 - Une API IA peut demarrer meme sans backend LLM reel.
 - Les comportements principaux sont testes.
@@ -334,6 +361,9 @@ Resultat attendu: Prometheus voit la target API en `UP` et Grafana charge le das
 - Un serveur vLLM OpenAI-compatible repond sur la machine locale.
 - L'API FastAPI peut router `/chat` vers `backend=vllm`.
 - La contention GPU avec Ollama est identifiee comme limite operationnelle locale.
+- Un exporter local expose des metriques GPU sans dependance lourde.
+- Prometheus peut scraper l'exporter GPU via `host.docker.internal:9101`.
+- Grafana contient un dashboard GPU local.
 
 ## Documentation projet
 
@@ -345,6 +375,7 @@ Resultat attendu: Prometheus voit la target API en `UP` et Grafana charge le das
 - `docs/gitops.md`: structure Flux locale, secrets, rollback et limites.
 - `docs/vllm.md`: mode vLLM, manifests GPU, DCGM et limites.
 - `docs/vllm-runtime.md`: execution vLLM reelle sur GPU local, commandes et limites.
+- `docs/gpu-monitoring.md`: exporter GPU local, Prometheus, Grafana, limites et piste DCGM.
 - `docs/benchmark-v0.9.0.md`: mesures indicatives mock/Ollama/vLLM.
 - `docs/kubernetes-local.md`: manifests Kubernetes locaux, commandes et limites.
 - `docs/ollama-local.md`: mode Ollama local, modele valide et limites.
@@ -362,6 +393,7 @@ Resultat attendu: Prometheus voit la target API en `UP` et Grafana charge le das
 - `docs/validation-v0.8.0.md`: preuves de validation vLLM mode candidature.
 - `docs/validation-v0.8.1.md`: preuves de validation des overlays Kubernetes backend.
 - `docs/validation-v0.9.0.md`: preuves de validation vLLM runtime GPU local.
+- `docs/validation-v0.10.0.md`: preuves de validation monitoring GPU local.
 - `docs/validation-v0.2.0.md`: preuves de validation Docker Compose, Prometheus et Grafana.
 - `docs/versioning.md`: convention de versions et tags Git.
 - `docs/contributing.md`: style de contribution, commentaires, tests et Git.
@@ -373,7 +405,6 @@ Les notes de journal et de preparation entretien sont conservees localement, mai
 
 ## Prochaines etapes
 
-- Ajouter monitoring GPU avec DCGM Exporter ou alternative locale.
 - Executer une CI distante sur GitHub ou GitLab.
 - Installer Flux CD reellement dans un cluster local.
 - Ajouter scenarios de robustesse et chaos engineering local.

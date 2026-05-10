@@ -17,6 +17,7 @@ La pipeline est definie dans `.gitlab-ci.yml`.
 | `validate` | `k8s-static-check` | Verifier les invariants Kubernetes attendus par le projet |
 | `validate` | `k8s-overlays-static-check` | Verifier les overlays backend Kubernetes |
 | `validate` | `gitops-static-check` | Verifier les invariants GitOps Flux attendus |
+| `validate` | `monitoring-static-check` | Verifier Prometheus et le dashboard GPU |
 | `validate` | `vllm-static-check` | Verifier les manifests vLLM exemples |
 | `build` | `docker-build` | Construire l'image API dans la CI |
 
@@ -78,5 +79,6 @@ Quand un deploiement automatique sera ajoute, le rollback devra etre documente a
 
 - Le job `k8s-static-check` ne remplace pas une validation par un vrai cluster.
 - Le job `docker-build` ne publie pas encore d'image.
-- La CI ne valide pas Ollama, vLLM, GPU, Flux CD ou secrets externes.
+- La CI ne lance pas Ollama, vLLM, GPU, Flux CD ou secrets externes.
+- La CI valide seulement la configuration statique du monitoring GPU.
 - La CI prouve une hygiene de projet, pas une production.
