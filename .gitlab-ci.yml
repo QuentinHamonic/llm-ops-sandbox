@@ -10,7 +10,13 @@ workflow:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
     - when: never
 
-lint:
+ci-smoke-job:
+  stage: lint
+  image: alpine:3.20
+  script:
+    - echo "GitLab CI can see visible jobs."
+
+lint-job:
   stage: lint
   image: python:3.12-slim
   before_script:
@@ -21,7 +27,7 @@ lint:
     - ruff check .
     - ruff format --check .
 
-test:
+test-job:
   stage: test
   image: python:3.12-slim
   before_script:
@@ -31,7 +37,7 @@ test:
   script:
     - pytest
 
-api_docs_check:
+api-docs-check-job:
   stage: validate
   image: python:3.12-slim
   before_script:
@@ -41,7 +47,24 @@ api_docs_check:
   script:
     - python scripts/export_api_docs.py --check
 
-k8s_static_check:
+github-actions-static-check-job:
+  stage: validate
+  image: python:3.12-slim
+  before_script:
+    - python --version
+    - pip install --upgrade pip
+    - pip install -e ".[dev]"
+  script:
+    - python scripts/check_github_actions.py
+
+compose-config-job:
+  stage: validate
+  image: docker:27-cli
+  script:
+    - docker compose version
+    - docker compose config
+
+k8s-static-check-job:
   stage: validate
   image: python:3.12-slim
   before_script:
@@ -51,7 +74,47 @@ k8s_static_check:
   script:
     - python scripts/check_k8s_manifests.py
 
-docker_build:
+k8s-overlays-static-check-job:
+  stage: validate
+  image: python:3.12-slim
+  before_script:
+    - python --version
+    - pip install --upgrade pip
+    - pip install -e ".[dev]"
+  script:
+    - python scripts/check_k8s_overlays.py
+
+gitops-static-check-job:
+  stage: validate
+  image: python:3.12-slim
+  before_script:
+    - python --version
+    - pip install --upgrade pip
+    - pip install -e ".[dev]"
+  script:
+    - python scripts/check_gitops_manifests.py
+
+monitoring-static-check-job:
+  stage: validate
+  image: python:3.12-slim
+  before_script:
+    - python --version
+    - pip install --upgrade pip
+    - pip install -e ".[dev]"
+  script:
+    - python scripts/check_monitoring_config.py
+
+vllm-static-check-job:
+  stage: validate
+  image: python:3.12-slim
+  before_script:
+    - python --version
+    - pip install --upgrade pip
+    - pip install -e ".[dev]"
+  script:
+    - python scripts/check_vllm_manifests.py
+
+docker-build-job:
   stage: build
   image: docker:27-cli
   services:
