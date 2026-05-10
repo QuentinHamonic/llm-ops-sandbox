@@ -4,6 +4,12 @@ stages:
   - validate
   - build
 
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push"'
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - when: never
+
 lint:
   stage: lint
   image: python:3.12-slim
