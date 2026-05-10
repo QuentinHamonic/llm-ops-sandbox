@@ -15,7 +15,7 @@ Objectif: savoir quoi faire ensuite, ce qui est deja fait, pourquoi on le fait, 
 
 ## Etat global
 
-Statut actuel: **`v0.8.1` en validation**.
+Statut actuel: **`v0.9.0` en validation**.
 
 Cap cible: rendre le projet credible pour une trajectoire **AI DevOps / Infrastructure / Optimisation**. Le projet ne pretend pas remplacer une experience production a grande echelle, mais il doit prouver une methode: concevoir, deployer, observer, automatiser, diagnostiquer et documenter une petite plateforme LLM Ops reproductible.
 
@@ -33,14 +33,15 @@ Ce que le projet prouve deja:
 - Des manifests Kubernetes minimaux existent.
 - Une pipeline GitLab CI sobre existe.
 - Une structure GitOps Flux locale existe.
-- Un mode vLLM preparatoire existe.
 - Des overlays Kubernetes permettent de choisir le backend sans modifier la base.
+- Un mode vLLM preparatoire existe.
+- Un serveur vLLM reel a ete valide en Docker avec GPU NVIDIA local.
 - La documentation de base existe.
 
 Ce que le projet ne prouve pas encore:
 
 - Deploiement Kubernetes production.
-- Serving vLLM GPU reel.
+- Serving vLLM GPU dans Kubernetes.
 - Monitoring GPU.
 - GitLab CI executee sur une vraie forge.
 - Flux CD reellement installe et connecte a un depot distant.
@@ -56,12 +57,12 @@ Cette section traduit la roadmap en competences proches du poste vise.
 
 | Axe du poste | Etat actuel | Direction |
 | --- | --- | --- |
-| Serving LLM | Ollama reel valide, vLLM prepare | Lancer vLLM reel sur GPU local |
+| Serving LLM | Ollama reel valide, vLLM reel valide en Docker GPU | Stabiliser image/runtime vLLM puis tester chemin Kubernetes |
 | Kubernetes | API deployee localement, overlays backend | Tester chemin GPU et rollback |
 | CI/CD | GitLab CI decrite et validee statiquement | Executer la CI sur une forge reelle |
 | GitOps Flux | Manifests Flux prepares | Installer Flux et reconciler depuis GitHub/GitLab |
 | Observabilite | Prometheus/Grafana API | Ajouter metriques GPU et alerting |
-| Performance | Mini benchmark Ollama | Benchmark mock/Ollama/vLLM |
+| Performance | Mini benchmark mock/Ollama/vLLM indicatif | Ajouter mesures tokens/sec et charge simple |
 | Fiabilite | Tests, runbooks, health, metrics | Scenarios incident + recovery |
 | Securite/ethique | Confidentialite logs/metriques documentee | Maintenir cette exigence sur GPU/GitOps |
 
@@ -342,14 +343,14 @@ Cette version doit rester honnete: si vLLM ne tourne pas dans Kubernetes, on doc
 
 | Statut | Tache | Preuve attendue |
 | --- | --- | --- |
-| A faire | Verifier que Docker voit le GPU | Commande NVIDIA/CUDA avec `--gpus all` |
-| A faire | Lancer un serveur vLLM reel | Endpoint OpenAI-compatible disponible |
-| A faire | Brancher l'API sur vLLM | `/chat` repond avec `backend=vllm` |
-| A faire | Tester `/backend/status` vLLM | `/models` liste le modele configure |
-| A faire | Mesurer latence vLLM | Benchmark court documente |
-| A faire | Comparer mock / Ollama / vLLM | Tableau de resultats |
-| A faire | Documenter limites GPU/modele | `docs/vllm-runtime.md` |
-| A faire | Ajouter cours prive vLLM runtime | `docs/cours/vllm-runtime.md` |
+| Fait | Verifier que Docker voit le GPU | Commande NVIDIA/CUDA avec `--gpus all` |
+| Fait | Lancer un serveur vLLM reel | Endpoint OpenAI-compatible disponible |
+| Fait | Brancher l'API sur vLLM | `/chat` repond avec `backend=vllm` |
+| Fait | Tester `/backend/status` vLLM | `/models` liste le modele configure |
+| Fait | Mesurer latence vLLM | `docs/benchmark-v0.9.0.md` |
+| Fait | Comparer mock / Ollama / vLLM | Tableau de resultats avec limite Ollama |
+| Fait | Documenter limites GPU/modele | `docs/vllm-runtime.md` |
+| Fait | Ajouter cours prive vLLM runtime | `docs/cours/v0.9.0.md` |
 
 ## Definition of done `v0.9.0`
 
@@ -361,6 +362,7 @@ Cette version doit rester honnete: si vLLM ne tourne pas dans Kubernetes, on doc
 - L'API FastAPI peut utiliser `LLM_BACKEND=vllm`.
 - Un appel `/chat` renvoie une reponse vLLM reelle.
 - Les resultats et limites sont documentes.
+- `docs/validation-v0.9.0.md` documente les preuves.
 - Le tag Git `v0.9.0` existe.
 
 ## `v0.10.0` - Monitoring GPU
