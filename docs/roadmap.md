@@ -15,7 +15,7 @@ Objectif: savoir quoi faire ensuite, ce qui est deja fait, pourquoi on le fait, 
 
 ## Etat global
 
-Statut actuel: **`v0.9.0` en validation**.
+Statut actuel: **`v0.10.0` en validation**.
 
 Cap cible: rendre le projet credible pour une trajectoire **AI DevOps / Infrastructure / Optimisation**. Le projet ne pretend pas remplacer une experience production a grande echelle, mais il doit prouver une methode: concevoir, deployer, observer, automatiser, diagnostiquer et documenter une petite plateforme LLM Ops reproductible.
 
@@ -36,13 +36,15 @@ Ce que le projet prouve deja:
 - Des overlays Kubernetes permettent de choisir le backend sans modifier la base.
 - Un mode vLLM preparatoire existe.
 - Un serveur vLLM reel a ete valide en Docker avec GPU NVIDIA local.
+- Un exporter GPU local expose des metriques `nvidia-smi` pour Prometheus.
+- Un dashboard Grafana GPU local existe.
 - La documentation de base existe.
 
 Ce que le projet ne prouve pas encore:
 
 - Deploiement Kubernetes production.
 - Serving vLLM GPU dans Kubernetes.
-- Monitoring GPU.
+- Monitoring GPU Kubernetes/DCGM.
 - GitLab CI executee sur une vraie forge.
 - Flux CD reellement installe et connecte a un depot distant.
 - Rollback automatise ou procedure GitOps testee.
@@ -61,7 +63,7 @@ Cette section traduit la roadmap en competences proches du poste vise.
 | Kubernetes | API deployee localement, overlays backend | Tester chemin GPU et rollback |
 | CI/CD | GitLab CI decrite et validee statiquement | Executer la CI sur une forge reelle |
 | GitOps Flux | Manifests Flux prepares | Installer Flux et reconciler depuis GitHub/GitLab |
-| Observabilite | Prometheus/Grafana API | Ajouter metriques GPU et alerting |
+| Observabilite | Prometheus/Grafana API + GPU local | Ajouter alerting et monitoring Kubernetes/DCGM |
 | Performance | Mini benchmark mock/Ollama/vLLM indicatif | Ajouter mesures tokens/sec et charge simple |
 | Fiabilite | Tests, runbooks, health, metrics | Scenarios incident + recovery |
 | Securite/ethique | Confidentialite logs/metriques documentee | Maintenir cette exigence sur GPU/GitOps |
@@ -371,12 +373,14 @@ Objectif: ajouter une observabilite GPU exploitable, proche des besoins AI DevOp
 
 | Statut | Tache | Preuve attendue |
 | --- | --- | --- |
-| A faire | Choisir le mode GPU metrics | DCGM Exporter ou alternative locale documentee |
-| A faire | Exposer les metriques GPU | Endpoint scrapeable par Prometheus |
-| A faire | Ajouter scrape Prometheus | Target GPU visible |
-| A faire | Ajouter dashboard Grafana GPU | Utilisation GPU, memoire GPU, erreurs ou limites documentees |
-| A faire | Ajouter note latence/tokens | Signaux utiles pour serving LLM |
-| A faire | Documenter limites Windows/Docker/Kubernetes | `docs/gpu-monitoring.md` |
+| Fait | Choisir le mode GPU metrics | Exporter local `nvidia-smi`, DCGM documente comme suite |
+| Fait | Exposer les metriques GPU | `scripts/gpu_metrics_exporter.py` sur `/metrics` |
+| Fait | Ajouter scrape Prometheus | Job `llm-ops-sandbox-gpu` |
+| Fait | Ajouter dashboard Grafana GPU | `monitoring/grafana/dashboards/llm-ops-gpu.json` |
+| Fait | Ajouter note latence/tokens | `docs/gpu-monitoring.md` documente les limites |
+| Fait | Documenter limites Windows/Docker/Kubernetes | `docs/gpu-monitoring.md` |
+| Fait | Ajouter validation statique monitoring | `python scripts/check_monitoring_config.py` |
+| Fait | Ajouter cours prive monitoring GPU | `docs/cours/v0.10.0.md` |
 
 ## Definition of done `v0.10.0`
 
@@ -386,6 +390,7 @@ Objectif: ajouter une observabilite GPU exploitable, proche des besoins AI DevOp
 - Grafana affiche un dashboard GPU ou une capture/note de validation existe.
 - Les metriques utiles pour une plateforme LLM sont expliquees.
 - Les limites locales sont honnetement documentees.
+- `docs/validation-v0.10.0.md` documente les preuves.
 - Le tag Git `v0.10.0` existe.
 
 ## `v0.11.0` - CI reelle sur forge distante

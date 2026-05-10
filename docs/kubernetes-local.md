@@ -36,7 +36,7 @@ k8s/base/
 ## Construire l'image locale
 
 ```powershell
-docker build -t llm-ops-sandbox-api:0.9.0 .
+docker build -t llm-ops-sandbox-api:0.10.0 .
 ```
 
 ## Valider les manifests dans le projet
