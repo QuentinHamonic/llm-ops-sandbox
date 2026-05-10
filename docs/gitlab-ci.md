@@ -15,6 +15,7 @@ La pipeline est definie dans `.gitlab-ci.yml`.
 | `validate` | `api-docs-check` | Verifier que la documentation API generee est a jour |
 | `validate` | `compose-config` | Verifier que `compose.yml` est syntaxiquement coherent |
 | `validate` | `k8s-static-check` | Verifier les invariants Kubernetes attendus par le projet |
+| `validate` | `k8s-overlays-static-check` | Verifier les overlays backend Kubernetes |
 | `validate` | `gitops-static-check` | Verifier les invariants GitOps Flux attendus |
 | `validate` | `vllm-static-check` | Verifier les manifests vLLM exemples |
 | `build` | `docker-build` | Construire l'image API dans la CI |

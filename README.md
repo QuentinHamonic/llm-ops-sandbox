@@ -3,7 +3,7 @@
 Demonstrateur minimal pour explorer l'exploitation d'un service LLM auto-heberge:
 API FastAPI, backend mock par defaut, Ollama optionnel, metriques Prometheus et dashboard Grafana.
 
-Le but de `v0.8.0` n'est pas de prouver une infrastructure production complete. Le but est de poser une base fiable, observable, testable, validable en CI, explicable en GitOps, preparatoire pour vLLM et facile a expliquer.
+Le but de `v0.8.1` n'est pas de prouver une infrastructure production complete. Le but est de poser une base fiable, observable, testable, validable en CI, explicable en GitOps, preparatoire pour vLLM et facile a expliquer.
 
 ## Demarrage local
 
@@ -125,6 +125,7 @@ Elle lance:
 - `python scripts/check_gitlab_ci.py`
 - `python scripts/check_gitops_manifests.py`
 - `python scripts/check_vllm_manifests.py`
+- `python scripts/check_k8s_overlays.py`
 - `docker compose config` avec une configuration Docker temporaire.
 - `python scripts/check_k8s_manifests.py`
 
@@ -147,7 +148,7 @@ kubectl kustomize k8s/base
 Construire l'image locale pour un cluster Docker Desktop Kubernetes:
 
 ```powershell
-docker build -t llm-ops-sandbox-api:0.8.0 .
+docker build -t llm-ops-sandbox-api:0.8.1 .
 ```
 
 Appliquer les manifests:
@@ -156,6 +157,16 @@ Appliquer les manifests:
 kubectl apply -k k8s/base
 kubectl port-forward svc/llm-ops-sandbox-api 8000:8000
 ```
+
+Choisir un backend Kubernetes sans modifier `k8s/base/configmap.yaml`:
+
+```powershell
+kubectl apply -k k8s/overlays/mock
+kubectl apply -k k8s/overlays/ollama
+kubectl apply -k k8s/overlays/vllm
+```
+
+Les overlays changent aussi une annotation du Deployment pour declencher un nouveau rollout du Pod.
 
 Documentation detaillee: `docs/kubernetes-local.md`.
 
@@ -203,6 +214,7 @@ La pipeline verifie:
 - Documentation API generee.
 - Configuration Docker Compose.
 - Manifests Kubernetes par validation statique.
+- Overlays Kubernetes backend par validation statique.
 - Manifests GitOps Flux par validation statique.
 - Manifests vLLM par validation statique.
 - Build Docker de l'API.
@@ -284,7 +296,7 @@ Puis ouvrir:
 
 Resultat attendu: Prometheus voit la target API en `UP` et Grafana charge le dashboard `LLM Ops Sandbox`.
 
-## Ce que `v0.8.0` prouve
+## Ce que `v0.8.1` prouve
 
 - Une API IA peut demarrer meme sans backend LLM reel.
 - Les comportements principaux sont testes.
@@ -304,6 +316,7 @@ Resultat attendu: Prometheus voit la target API en `UP` et Grafana charge le das
 - Les manifests GitOps sont validates statiquement et integres a la CI.
 - Le projet prepare un backend vLLM OpenAI-compatible sans casser le mock.
 - Les limites GPU, image vLLM et DCGM sont documentees honnetement.
+- Kubernetes peut changer de backend avec des overlays `mock`, `ollama` et `vllm`.
 
 ## Documentation projet
 

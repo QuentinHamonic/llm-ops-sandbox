@@ -1,0 +1,9 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llm-ops-sandbox-api
+spec:
+  template:
+    metadata:
+      annotations:
+        llm-ops-sandbox.io/backend: "vllm"

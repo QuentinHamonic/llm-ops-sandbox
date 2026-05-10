@@ -4,7 +4,7 @@
     "title": "LLM Ops Sandbox",
     "summary": "API locale pour experimenter une stack LLM Ops observable.",
     "description": "LLM Ops Sandbox expose une API FastAPI minimale avec un backend LLM mock par defaut, des backends Ollama/vLLM optionnels et des metriques Prometheus. Le projet privilegie la reproductibilite, l'observabilite et la confidentialite.",
-    "version": "0.8.0"
+    "version": "0.8.1"
   },
   "paths": {
     "/health": {

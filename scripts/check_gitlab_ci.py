@@ -51,6 +51,11 @@ def main() -> int:
     assert_job_script_contains(config, "k8s-static-check", "python scripts/check_k8s_manifests.py")
     assert_job_script_contains(
         config,
+        "k8s-overlays-static-check",
+        "python scripts/check_k8s_overlays.py",
+    )
+    assert_job_script_contains(
+        config,
         "gitops-static-check",
         "python scripts/check_gitops_manifests.py",
     )
