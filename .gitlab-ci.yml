@@ -4,6 +4,10 @@
   - validate
   - build
 
+workflow:
+  rules:
+    - when: always
+
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
 
@@ -13,6 +17,12 @@ cache:
 
 default:
   interruptible: true
+
+ci-smoke-job:
+  stage: lint
+  image: alpine:3.20
+  script:
+    - echo "GitLab CI can see visible jobs."
 
 lint-job:
   stage: lint

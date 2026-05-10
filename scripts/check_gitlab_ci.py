@@ -59,10 +59,19 @@ def main() -> int:
     if config.get("stages") != expected_stages:
         raise AssertionError(f"unexpected GitLab CI stages: {config.get('stages')!r}")
 
+    workflow = config.get("workflow")
+    if not isinstance(workflow, dict):
+        raise AssertionError("GitLab CI must define an explicit workflow")
+
     jobs = visible_jobs(config)
     if not jobs:
         raise AssertionError("GitLab CI must define at least one visible job")
 
+    assert_job_script_contains(
+        config,
+        "ci-smoke-job",
+        'echo "GitLab CI can see visible jobs."',
+    )
     assert_job_script_contains(config, "lint-job", "ruff check .")
     assert_job_script_contains(config, "lint-job", "ruff format --check .")
     assert_job_script_contains(config, "test-job", "pytest")
