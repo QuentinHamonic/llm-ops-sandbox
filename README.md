@@ -3,7 +3,7 @@
 Demonstrateur minimal pour explorer l'exploitation d'un service LLM auto-heberge:
 API FastAPI, backend mock par defaut, Ollama optionnel, metriques Prometheus et dashboard Grafana.
 
-Le but de `v0.10.0` n'est pas de prouver une infrastructure production complete. Le but est de poser une base fiable, observable, testable, validable en CI, explicable en GitOps, capable d'appeler un serveur vLLM reel sur GPU local et de surveiller les ressources GPU locales.
+Le but de `v0.11.0` n'est pas de prouver une infrastructure production complete. Le but est de poser une base fiable, observable, testable, validable en CI, explicable en GitOps, capable d'appeler un serveur vLLM reel sur GPU local, de surveiller les ressources GPU locales et de preparer une CI publique GitHub avec miroir GitLab.
 
 ## Demarrage local
 
@@ -149,7 +149,7 @@ kubectl kustomize k8s/base
 Construire l'image locale pour un cluster Docker Desktop Kubernetes:
 
 ```powershell
-docker build -t llm-ops-sandbox-api:0.10.0 .
+docker build -t llm-ops-sandbox-api:0.11.0 .
 ```
 
 Appliquer les manifests:
@@ -263,6 +263,37 @@ La CI ne deploie rien automatiquement et n'utilise aucun secret.
 
 Documentation detaillee: `docs/gitlab-ci.md`.
 
+## GitHub Actions et miroir GitLab
+
+`v0.11.0` ajoute une CI GitHub Actions:
+
+```txt
+.github/workflows/ci.yml
+```
+
+Elle verifie:
+
+- lint et format Ruff;
+- tests Pytest;
+- documentation API generee;
+- validations statiques GitHub Actions, GitLab CI, GitOps, monitoring, vLLM et Kubernetes;
+- Docker Compose;
+- build Docker.
+
+Le projet conserve aussi `.gitlab-ci.yml` pour un miroir GitLab CI.
+
+Strategie:
+
+```txt
+GitHub = source principale
+GitLab = miroir aval pour executer GitLab CI
+```
+
+Documentation detaillee:
+
+- `docs/github-actions.md`
+- `docs/ci-mirror.md`
+
 ## Documentation API generee
 
 FastAPI expose deja la documentation interactive quand l'API tourne:
@@ -336,7 +367,7 @@ Puis ouvrir:
 
 Resultat attendu: Prometheus voit la target API en `UP` et Grafana charge le dashboard `LLM Ops Sandbox`.
 
-## Ce que `v0.10.0` prouve
+## Ce que `v0.11.0` prouve
 
 - Une API IA peut demarrer meme sans backend LLM reel.
 - Les comportements principaux sont testes.
@@ -364,6 +395,9 @@ Resultat attendu: Prometheus voit la target API en `UP` et Grafana charge le das
 - Un exporter local expose des metriques GPU sans dependance lourde.
 - Prometheus peut scraper l'exporter GPU via `host.docker.internal:9101`.
 - Grafana contient un dashboard GPU local.
+- Une CI GitHub Actions publique est configuree.
+- La pipeline GitLab CI reste presente pour un miroir GitLab.
+- Les deux fichiers CI sont verifies localement par `python scripts/check.py`.
 
 ## Documentation projet
 
@@ -371,6 +405,8 @@ Resultat attendu: Prometheus voit la target API en `UP` et Grafana charge le das
 - `docs/architecture.md`: vue logique de la stack.
 - `docs/generated/api.md`: documentation API generee en Markdown.
 - `docs/generated/openapi.json`: contrat OpenAPI exporte.
+- `docs/github-actions.md`: workflow GitHub Actions, jobs, permissions et limites.
+- `docs/ci-mirror.md`: strategie GitHub source principale et GitLab miroir CI.
 - `docs/gitlab-ci.md`: pipeline CI, strategie de secrets, rollback et limites.
 - `docs/gitops.md`: structure Flux locale, secrets, rollback et limites.
 - `docs/vllm.md`: mode vLLM, manifests GPU, DCGM et limites.
@@ -394,6 +430,7 @@ Resultat attendu: Prometheus voit la target API en `UP` et Grafana charge le das
 - `docs/validation-v0.8.1.md`: preuves de validation des overlays Kubernetes backend.
 - `docs/validation-v0.9.0.md`: preuves de validation vLLM runtime GPU local.
 - `docs/validation-v0.10.0.md`: preuves de validation monitoring GPU local.
+- `docs/validation-v0.11.0.md`: preuves de validation GitHub Actions et miroir GitLab.
 - `docs/validation-v0.2.0.md`: preuves de validation Docker Compose, Prometheus et Grafana.
 - `docs/versioning.md`: convention de versions et tags Git.
 - `docs/contributing.md`: style de contribution, commentaires, tests et Git.
@@ -405,6 +442,6 @@ Les notes de journal et de preparation entretien sont conservees localement, mai
 
 ## Prochaines etapes
 
-- Executer une CI distante sur GitHub ou GitLab.
+- Creer les repos distants GitHub/GitLab et observer le premier run CI vert.
 - Installer Flux CD reellement dans un cluster local.
 - Ajouter scenarios de robustesse et chaos engineering local.

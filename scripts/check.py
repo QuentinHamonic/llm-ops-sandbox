@@ -28,6 +28,7 @@ def main() -> int:
             ("ruff format", [sys.executable, "-m", "ruff", "format", "--check", "."], None),
             ("pytest", [sys.executable, "-m", "pytest"], None),
             ("api docs", [sys.executable, "scripts/export_api_docs.py", "--check"], None),
+            ("github actions", [sys.executable, "scripts/check_github_actions.py"], None),
             ("gitlab ci", [sys.executable, "scripts/check_gitlab_ci.py"], None),
             ("gitops manifests", [sys.executable, "scripts/check_gitops_manifests.py"], None),
             ("monitoring config", [sys.executable, "scripts/check_monitoring_config.py"], None),
