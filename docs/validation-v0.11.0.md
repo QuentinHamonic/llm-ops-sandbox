@@ -45,7 +45,7 @@ Fichier conserve:
 Ajout:
 
 ```txt
-github-actions-static-check
+github-actions-static-check-job
 ```
 
 Objectif:
