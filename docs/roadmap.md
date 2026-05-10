@@ -15,7 +15,7 @@ Objectif: savoir quoi faire ensuite, ce qui est deja fait, pourquoi on le fait, 
 
 ## Etat global
 
-Statut actuel: **`v0.6.0` en validation**.
+Statut actuel: **`v0.7.0` en validation**.
 
 Ce que le projet prouve deja:
 
@@ -30,12 +30,12 @@ Ce que le projet prouve deja:
 - Ollama est branche comme backend local optionnel.
 - Des manifests Kubernetes minimaux existent.
 - Une pipeline GitLab CI sobre existe.
+- Une structure GitOps Flux locale existe.
 - La documentation de base existe.
 
 Ce que le projet ne prouve pas encore:
 
 - Deploiement Kubernetes production.
-- GitOps Flux CD.
 - Serving vLLM.
 - Monitoring GPU.
 - Scenario incident/runbook complet.
@@ -228,17 +228,44 @@ GitLab CI ne remplace pas Git. Git sert d'abord a garder un historique clair du 
 - `docs/validation-v0.6.0.md` documente les preuves.
 - Le tag Git `v0.6.0` existe.
 
-## `v0.7.0` et `v0.8.0` - GitOps et vLLM
+## `v0.7.0` - GitOps Flux local
 
 Objectif: aligner le projet avec le poste vise, apres le socle stable.
 
 | Statut | Tache | Preuve attendue |
 | --- | --- | --- |
-| A faire | Ajouter structure GitOps | `gitops/` avec env local |
-| A faire | Ajouter exemple Flux Kustomization | YAML documente |
-| A faire | Ajouter exemple HelmRelease | Meme si non applique en prod |
+| Fait | Ajouter structure GitOps | `gitops/local/` |
+| Fait | Ajouter exemple Flux GitRepository | `gitops/local/source.yaml` |
+| Fait | Ajouter exemple Flux Kustomization | `gitops/local/kustomization.yaml` |
+| Fait | Ajouter exemple HelmRelease | `gitops/local/helmrelease-monitoring-example.yaml` |
+| Fait | Ajouter validation statique GitOps | `python scripts/check_gitops_manifests.py` |
+| Fait | Ajouter job CI GitOps | `gitops-static-check` |
+| Fait | Documenter secrets et rollback GitOps | `docs/gitops.md` |
+
+## Definition of done `v0.7.0`
+
+`v0.7.0` sera consideree complete quand:
+
+- `python scripts/check.py` passe.
+- `python scripts/check_gitops_manifests.py` passe.
+- `gitops/local/` contient une source Git Flux et une Kustomization vers `./k8s/base`.
+- Un exemple HelmRepository/HelmRelease existe et reste documente comme exemple.
+- `.gitlab-ci.yml` contient `gitops-static-check`.
+- `docs/gitops.md` explique la strategie GitOps, secrets, rollback et limites.
+- `docs/validation-v0.7.0.md` documente les preuves.
+- Le tag Git `v0.7.0` existe.
+
+## `v0.8.0` - vLLM mode candidature
+
+Objectif: documenter et preparer un mode de serving vLLM sans pretendre a un test GPU local si le materiel n'est pas disponible.
+
+| Statut | Tache | Preuve attendue |
+| --- | --- | --- |
 | A faire | Ajouter mode vLLM | Doc + config separee |
+| A faire | Ajouter exemple de deploiement vLLM | Manifests ou compose separes |
 | A faire | Ajouter notes GPU/DCGM | Limites honnetes si pas de test GPU |
+| A faire | Documenter variables vLLM | README ou doc dediee |
+| A faire | Ajouter validation statique vLLM | Script de check si manifests presents |
 
 ## `v0.9.0` - Robustesse et chaos engineering local
 

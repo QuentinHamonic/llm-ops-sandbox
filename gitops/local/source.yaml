@@ -1,0 +1,10 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: llm-ops-sandbox
+  namespace: flux-system
+spec:
+  interval: 1m
+  url: https://gitlab.example.com/example/llm-ops-sandbox.git
+  ref:
+    branch: main

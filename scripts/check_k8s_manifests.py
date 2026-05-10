@@ -43,7 +43,7 @@ def check_deployment(deployment: dict[str, Any]) -> None:
     assert_equal(annotations.get("prometheus.io/scrape"), "true", "pod scrape annotation")
 
     container = template["spec"]["containers"][0]
-    assert_equal(container.get("image"), "llm-ops-sandbox-api:0.6.0", "deployment image")
+    assert_equal(container.get("image"), "llm-ops-sandbox-api:0.7.0", "deployment image")
     assert_in("livenessProbe", container, "deployment container")
     assert_in("readinessProbe", container, "deployment container")
     assert_equal(
