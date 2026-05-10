@@ -101,7 +101,71 @@ class OllamaBackend(LLMBackend):
         )
 
 
+class VLLMBackend(LLMBackend):
+    name = "vllm"
+
+    def __init__(self, base_url: str, model: str) -> None:
+        self.base_url = base_url.rstrip("/")
+        self.model = model
+
+    async def generate(self, message: str) -> str:
+        payload = {
+            "model": self.model,
+            "messages": [{"role": "user", "content": message}],
+            "stream": False,
+        }
+        try:
+            async with httpx.AsyncClient(timeout=60.0) as client:
+                response = await client.post(f"{self.base_url}/chat/completions", json=payload)
+                response.raise_for_status()
+        except httpx.HTTPError as exc:
+            raise LLMBackendError(f"vLLM request failed: {exc}") from exc
+
+        data = response.json()
+        try:
+            reply = data["choices"][0]["message"]["content"]
+        except (KeyError, IndexError, TypeError) as exc:
+            raise LLMBackendError(
+                "vLLM response did not contain a usable chat completion."
+            ) from exc
+
+        if not isinstance(reply, str) or not reply.strip():
+            raise LLMBackendError("vLLM response did not contain non-empty text.")
+        return reply.strip()
+
+    async def status(self) -> LLMBackendStatus:
+        try:
+            async with httpx.AsyncClient(timeout=5.0) as client:
+                response = await client.get(f"{self.base_url}/models")
+                response.raise_for_status()
+        except httpx.HTTPError as exc:
+            raise LLMBackendError(f"vLLM status check failed: {exc}") from exc
+
+        data = response.json()
+        models = data.get("data", [])
+        available_models = {
+            item.get("id")
+            for item in models
+            if isinstance(item, dict) and isinstance(item.get("id"), str)
+        }
+        if self.model in available_models:
+            return LLMBackendStatus(
+                name=self.name,
+                available=True,
+                model=self.model,
+                detail="Configured vLLM model is available.",
+            )
+        return LLMBackendStatus(
+            name=self.name,
+            available=False,
+            model=self.model,
+            detail="vLLM is reachable, but the configured model is not listed.",
+        )
+
+
 def build_backend(settings: Settings) -> LLMBackend:
     if settings.llm_backend == "ollama":
         return OllamaBackend(settings.ollama_base_url, settings.ollama_model)
+    if settings.llm_backend == "vllm":
+        return VLLMBackend(settings.vllm_base_url, settings.vllm_model)
     return MockBackend()

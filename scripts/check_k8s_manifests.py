@@ -32,6 +32,11 @@ def check_configmap(configmap: dict[str, Any]) -> None:
     data = configmap.get("data", {})
     assert_equal(data.get("LLM_BACKEND"), "mock", "default backend")
     assert_equal(data.get("OLLAMA_MODEL"), "mistral:latest", "default Ollama model")
+    assert_equal(
+        data.get("VLLM_MODEL"),
+        "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+        "default vLLM model",
+    )
 
 
 def check_deployment(deployment: dict[str, Any]) -> None:
@@ -43,7 +48,7 @@ def check_deployment(deployment: dict[str, Any]) -> None:
     assert_equal(annotations.get("prometheus.io/scrape"), "true", "pod scrape annotation")
 
     container = template["spec"]["containers"][0]
-    assert_equal(container.get("image"), "llm-ops-sandbox-api:0.7.0", "deployment image")
+    assert_equal(container.get("image"), "llm-ops-sandbox-api:0.8.0", "deployment image")
     assert_in("livenessProbe", container, "deployment container")
     assert_in("readinessProbe", container, "deployment container")
     assert_equal(

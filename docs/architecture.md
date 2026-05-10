@@ -24,6 +24,8 @@ Le backend `mock` garantit que la demo fonctionne toujours. C'est volontaire: av
 
 Ollama est optionnel. Il sert a brancher un vrai modele local sans changer l'interface HTTP de l'API.
 
+vLLM est optionnel. Il est traite comme un backend OpenAI-compatible via HTTP, ce qui evite d'ajouter une dependance Python lourde dans l'API et garde les tests rapides independants du GPU.
+
 Prometheus scrape `/metrics` sur l'API. Grafana lit Prometheus et affiche les signaux de base: volume de requetes, latence p95, erreurs et appels backend.
 
 Kubernetes est documente par des manifests minimaux dans `k8s/base/`: `ConfigMap`, `Deployment` et `Service`. Cette couche montre la logique de deploiement, les probes et les resources, mais ne represente pas encore une production.
@@ -32,12 +34,14 @@ GitLab CI automatise les controles locaux principaux: lint, format, tests, docum
 
 GitOps est represente par des exemples Flux CD dans `gitops/local/`. Flux observe un depot Git et reconcilie `k8s/base/` comme etat voulu. Cette couche est statique et pedagogique en `v0.7.0`: elle documente la logique sans installer Flux dans un cluster.
 
+vLLM est represente par des manifests exemples dans `k8s/vllm/`. Cette couche montre le besoin GPU et le service OpenAI-compatible, mais ne valide pas encore un vrai serving GPU.
+
 ## Limites connues
 
 - Kubernetes minimal seulement, sans production hardening.
 - GitLab CI sans deploiement automatique.
 - Flux CD documente, mais pas installe ni reconcilie sur un cluster reel.
-- Pas encore de vLLM.
+- vLLM prepare, mais pas teste avec GPU local.
 - Pas d'authentification: ce projet est un sandbox local.
 
 Ces limites sont intentionnelles pour la V1.

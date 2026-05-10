@@ -2,9 +2,9 @@
 
 > Fichier genere par `python scripts/export_api_docs.py`. Ne pas modifier a la main.
 
-Version API: `0.7.0`
+Version API: `0.8.0`
 
-LLM Ops Sandbox expose une API FastAPI minimale avec un backend LLM mock par defaut, un backend Ollama optionnel et des metriques Prometheus. Le projet privilegie la reproductibilite, l'observabilite et la confidentialite.
+LLM Ops Sandbox expose une API FastAPI minimale avec un backend LLM mock par defaut, des backends Ollama/vLLM optionnels et des metriques Prometheus. Le projet privilegie la reproductibilite, l'observabilite et la confidentialite.
 
 ## Endpoints
 
@@ -29,7 +29,7 @@ Reponses documentees:
 
 ## POST `/chat`
 
-Utilise le backend `mock` par defaut pour garantir une demo stable. Si `LLM_BACKEND=ollama`, l'API appelle Ollama et retourne `502` si le backend ne repond pas correctement.
+Utilise le backend `mock` par defaut pour garantir une demo stable. Si `LLM_BACKEND=ollama` ou `LLM_BACKEND=vllm`, l'API appelle le backend local configure et retourne `502` si le backend ne repond pas correctement.
 
 Tags: `Chat`
 

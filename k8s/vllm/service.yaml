@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: vllm-openai
+  labels:
+    app.kubernetes.io/name: vllm-openai
+    app.kubernetes.io/component: llm-backend
+spec:
+  selector:
+    app.kubernetes.io/name: vllm-openai
+  ports:
+    - name: http
+      port: 8000
+      targetPort: http
