@@ -12,23 +12,25 @@ La pipeline est definie dans `.gitlab-ci.yml`.
 
 | Stage | Job | Objectif |
 | --- | --- | --- |
-| `lint` | `lint` | Verifier `ruff check .` et `ruff format --check .` |
-| `test` | `test` | Lancer les tests rapides avec `pytest` |
-| `validate` | `api-docs-check` | Verifier que la documentation API generee est a jour |
-| `validate` | `github-actions-static-check` | Verifier le workflow GitHub Actions |
-| `validate` | `compose-config` | Verifier que `compose.yml` est syntaxiquement coherent |
-| `validate` | `k8s-static-check` | Verifier les invariants Kubernetes attendus par le projet |
-| `validate` | `k8s-overlays-static-check` | Verifier les overlays backend Kubernetes |
-| `validate` | `gitops-static-check` | Verifier les invariants GitOps Flux attendus |
-| `validate` | `monitoring-static-check` | Verifier Prometheus et le dashboard GPU |
-| `validate` | `vllm-static-check` | Verifier les manifests vLLM exemples |
-| `build` | `docker-build` | Construire l'image API dans la CI |
+| `lint` | `lint-job` | Verifier `ruff check .` et `ruff format --check .` |
+| `test` | `test-job` | Lancer les tests rapides avec `pytest` |
+| `validate` | `api-docs-check-job` | Verifier que la documentation API generee est a jour |
+| `validate` | `github-actions-static-check-job` | Verifier le workflow GitHub Actions |
+| `validate` | `compose-config-job` | Verifier que `compose.yml` est syntaxiquement coherent |
+| `validate` | `k8s-static-check-job` | Verifier les invariants Kubernetes attendus par le projet |
+| `validate` | `k8s-overlays-static-check-job` | Verifier les overlays backend Kubernetes |
+| `validate` | `gitops-static-check-job` | Verifier les invariants GitOps Flux attendus |
+| `validate` | `monitoring-static-check-job` | Verifier Prometheus et le dashboard GPU |
+| `validate` | `vllm-static-check-job` | Verifier les manifests vLLM exemples |
+| `build` | `docker-build-job` | Construire l'image API dans la CI |
 
 La structure de `.gitlab-ci.yml` est aussi verifiee localement par:
 
 ```powershell
 python scripts/check_gitlab_ci.py
 ```
+
+Les noms de jobs utilisent le suffixe `-job` pour rester explicites et eviter les noms trop generiques.
 
 ## Strategie choisie
 

@@ -14,7 +14,7 @@ cache:
 default:
   interruptible: true
 
-lint:
+lint-job:
   stage: lint
   image: python:3.12-slim
   before_script:
@@ -25,7 +25,7 @@ lint:
     - ruff check .
     - ruff format --check .
 
-test:
+test-job:
   stage: test
   image: python:3.12-slim
   before_script:
@@ -35,7 +35,7 @@ test:
   script:
     - pytest
 
-api-docs-check:
+api-docs-check-job:
   stage: validate
   image: python:3.12-slim
   before_script:
@@ -45,7 +45,7 @@ api-docs-check:
   script:
     - python scripts/export_api_docs.py --check
 
-github-actions-static-check:
+github-actions-static-check-job:
   stage: validate
   image: python:3.12-slim
   before_script:
@@ -55,14 +55,14 @@ github-actions-static-check:
   script:
     - python scripts/check_github_actions.py
 
-compose-config:
+compose-config-job:
   stage: validate
   image: docker:27-cli
   script:
     - docker compose version
     - docker compose config
 
-k8s-static-check:
+k8s-static-check-job:
   stage: validate
   image: python:3.12-slim
   before_script:
@@ -72,7 +72,7 @@ k8s-static-check:
   script:
     - python scripts/check_k8s_manifests.py
 
-k8s-overlays-static-check:
+k8s-overlays-static-check-job:
   stage: validate
   image: python:3.12-slim
   before_script:
@@ -82,7 +82,7 @@ k8s-overlays-static-check:
   script:
     - python scripts/check_k8s_overlays.py
 
-gitops-static-check:
+gitops-static-check-job:
   stage: validate
   image: python:3.12-slim
   before_script:
@@ -92,7 +92,7 @@ gitops-static-check:
   script:
     - python scripts/check_gitops_manifests.py
 
-monitoring-static-check:
+monitoring-static-check-job:
   stage: validate
   image: python:3.12-slim
   before_script:
@@ -102,7 +102,7 @@ monitoring-static-check:
   script:
     - python scripts/check_monitoring_config.py
 
-vllm-static-check:
+vllm-static-check-job:
   stage: validate
   image: python:3.12-slim
   before_script:
@@ -112,7 +112,7 @@ vllm-static-check:
   script:
     - python scripts/check_vllm_manifests.py
 
-docker-build:
+docker-build-job:
   stage: build
   image: docker:27-cli
   services:
