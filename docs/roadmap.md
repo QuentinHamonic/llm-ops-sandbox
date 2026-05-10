@@ -17,6 +17,8 @@ Objectif: savoir quoi faire ensuite, ce qui est deja fait, pourquoi on le fait, 
 
 Statut actuel: **`v0.8.1` en validation**.
 
+Cap cible: rendre le projet credible pour une trajectoire **AI DevOps / Infrastructure / Optimisation**. Le projet ne pretend pas remplacer une experience production a grande echelle, mais il doit prouver une methode: concevoir, deployer, observer, automatiser, diagnostiquer et documenter une petite plateforme LLM Ops reproductible.
+
 Ce que le projet prouve deja:
 
 - Une API FastAPI demarre sans backend LLM externe.
@@ -40,8 +42,30 @@ Ce que le projet ne prouve pas encore:
 - Deploiement Kubernetes production.
 - Serving vLLM GPU reel.
 - Monitoring GPU.
+- GitLab CI executee sur une vraie forge.
+- Flux CD reellement installe et connecte a un depot distant.
+- Rollback automatise ou procedure GitOps testee.
+- Autoscaling, scheduling GPU ou quotas.
+- Alerting operationnel.
 - Scenario incident/runbook complet.
 - Scenarios de robustesse ou chaos engineering controles.
+
+## Lecture cible Infomaniak
+
+Cette section traduit la roadmap en competences proches du poste vise.
+
+| Axe du poste | Etat actuel | Direction |
+| --- | --- | --- |
+| Serving LLM | Ollama reel valide, vLLM prepare | Lancer vLLM reel sur GPU local |
+| Kubernetes | API deployee localement, overlays backend | Tester chemin GPU et rollback |
+| CI/CD | GitLab CI decrite et validee statiquement | Executer la CI sur une forge reelle |
+| GitOps Flux | Manifests Flux prepares | Installer Flux et reconciler depuis GitHub/GitLab |
+| Observabilite | Prometheus/Grafana API | Ajouter metriques GPU et alerting |
+| Performance | Mini benchmark Ollama | Benchmark mock/Ollama/vLLM |
+| Fiabilite | Tests, runbooks, health, metrics | Scenarios incident + recovery |
+| Securite/ethique | Confidentialite logs/metriques documentee | Maintenir cette exigence sur GPU/GitOps |
+
+Priorite: convertir les briques preparees en preuves runtime avant d'ajouter de nouveaux frameworks.
 
 ## `v0.1.0` - Socle local fiable
 
@@ -310,11 +334,111 @@ Objectif: rendre le switch Kubernetes `mock` / `ollama` / `vllm` reproductible s
 - `docs/validation-v0.8.1.md` documente les preuves.
 - Le tag Git `v0.8.1` existe.
 
-## `v0.9.0` - Robustesse et chaos engineering local
+## `v0.9.0` - vLLM reel sur GPU local
+
+Objectif: passer de "vLLM prepare" a "vLLM reellement execute" sur la machine locale avec GPU NVIDIA.
+
+Cette version doit rester honnete: si vLLM ne tourne pas dans Kubernetes, on documente le blocage et on valide d'abord le mode Docker. La priorite est une preuve runtime, pas une architecture parfaite.
+
+| Statut | Tache | Preuve attendue |
+| --- | --- | --- |
+| A faire | Verifier que Docker voit le GPU | Commande NVIDIA/CUDA avec `--gpus all` |
+| A faire | Lancer un serveur vLLM reel | Endpoint OpenAI-compatible disponible |
+| A faire | Brancher l'API sur vLLM | `/chat` repond avec `backend=vllm` |
+| A faire | Tester `/backend/status` vLLM | `/models` liste le modele configure |
+| A faire | Mesurer latence vLLM | Benchmark court documente |
+| A faire | Comparer mock / Ollama / vLLM | Tableau de resultats |
+| A faire | Documenter limites GPU/modele | `docs/vllm-runtime.md` |
+| A faire | Ajouter cours prive vLLM runtime | `docs/cours/vllm-runtime.md` |
+
+## Definition of done `v0.9.0`
+
+`v0.9.0` sera consideree complete quand:
+
+- `python scripts/check.py` passe.
+- Le GPU est visible depuis Docker.
+- Un serveur vLLM repond localement.
+- L'API FastAPI peut utiliser `LLM_BACKEND=vllm`.
+- Un appel `/chat` renvoie une reponse vLLM reelle.
+- Les resultats et limites sont documentes.
+- Le tag Git `v0.9.0` existe.
+
+## `v0.10.0` - Monitoring GPU
+
+Objectif: ajouter une observabilite GPU exploitable, proche des besoins AI DevOps.
+
+| Statut | Tache | Preuve attendue |
+| --- | --- | --- |
+| A faire | Choisir le mode GPU metrics | DCGM Exporter ou alternative locale documentee |
+| A faire | Exposer les metriques GPU | Endpoint scrapeable par Prometheus |
+| A faire | Ajouter scrape Prometheus | Target GPU visible |
+| A faire | Ajouter dashboard Grafana GPU | Utilisation GPU, memoire GPU, erreurs ou limites documentees |
+| A faire | Ajouter note latence/tokens | Signaux utiles pour serving LLM |
+| A faire | Documenter limites Windows/Docker/Kubernetes | `docs/gpu-monitoring.md` |
+
+## Definition of done `v0.10.0`
+
+`v0.10.0` sera consideree complete quand:
+
+- Prometheus scrape au moins une source de metriques GPU ou une limite explicite est documentee.
+- Grafana affiche un dashboard GPU ou une capture/note de validation existe.
+- Les metriques utiles pour une plateforme LLM sont expliquees.
+- Les limites locales sont honnetement documentees.
+- Le tag Git `v0.10.0` existe.
+
+## `v0.11.0` - CI reelle sur forge distante
+
+Objectif: passer d'une CI configuree localement a une CI executee sur une forge reelle.
+
+Le poste cite GitLab CI. Si le projet est publie sur GitHub d'abord, GitHub Actions peut servir de preuve publique complementaire, mais la documentation doit garder la difference claire.
+
+| Statut | Tache | Preuve attendue |
+| --- | --- | --- |
+| A faire | Publier le repo distant | URL GitHub ou GitLab documentee |
+| A faire | Executer une pipeline reelle | Lien ou note de run vert |
+| A faire | Ajouter GitHub Actions si GitHub est choisi | Workflow lint/test/check/build |
+| A faire | Conserver `.gitlab-ci.yml` comme competence cible | Doc expliquant l'equivalence GitLab/GitHub |
+| A faire | Documenter variables/secrets CI | Aucun secret commite |
+| A faire | Documenter rollback CI | Procedure courte |
+
+## Definition of done `v0.11.0`
+
+`v0.11.0` sera consideree complete quand:
+
+- Une CI distante a ete executee avec succes.
+- Le README indique comment lire la CI.
+- Les secrets CI sont documentes sans etre exposes.
+- Le tag Git `v0.11.0` existe.
+
+## `v0.12.0` - Flux CD reel
+
+Objectif: installer Flux dans Kubernetes local et faire reconciler le cluster depuis un repo Git distant.
+
+| Statut | Tache | Preuve attendue |
+| --- | --- | --- |
+| A faire | Installer Flux CLI | `flux --version` |
+| A faire | Bootstrap Flux vers le repo distant | `flux-system` cree dans le cluster |
+| A faire | Reconciler `k8s/overlays/mock` ou `ollama` | Flux applique l'overlay choisi |
+| A faire | Verifier l'etat Flux | `flux get kustomizations` |
+| A faire | Tester changement par Git | Commit config -> reconciliation observee |
+| A faire | Documenter rollback GitOps | Revenir a un commit/tag sain |
+| A faire | Documenter strategie secrets GitOps | SOPS/Sealed Secrets/External Secrets compares |
+
+## Definition of done `v0.12.0`
+
+`v0.12.0` sera consideree complete quand:
+
+- Flux est installe dans le cluster local.
+- Flux lit le repo distant.
+- Une modification Git declenche une reconciliation.
+- Le rollback GitOps est teste ou documente avec limites.
+- Le tag Git `v0.12.0` existe.
+
+## `v0.13.0` - Robustesse, incidents et chaos local
 
 Objectif: verifier que le service est observable et diagnostiquable quand une brique casse volontairement.
 
-Cette phase doit rester locale, reversible et documentee. Elle ne doit pas ralentir le chemin critique des versions precedentes.
+Cette phase doit rester locale, reversible et documentee. Elle ne doit pas casser le chemin principal du projet.
 
 | Statut | Tache | Preuve attendue |
 | --- | --- | --- |
@@ -323,7 +447,41 @@ Cette phase doit rester locale, reversible et documentee. Elle ne doit pas ralen
 | A faire | Simuler API arretee | Prometheus target `down` + procedure de recovery |
 | A faire | Simuler mauvais scrape Prometheus | Diagnostic documente |
 | A faire | Simuler latence API simple | Runbook latence enrichi |
+| A faire | Simuler echec vLLM si pertinent | Erreur visible et recovery documente |
+| A faire | Ajouter alertes minimales | Regles ou doc d'alerting |
 | A faire | Ajouter un cours prive associe | `docs/cours/chaos-engineering-local.md` |
+
+## Definition of done `v0.13.0`
+
+`v0.13.0` sera consideree complete quand:
+
+- Au moins deux scenarios incident sont executes et documentes.
+- Les signaux Prometheus/Grafana utiles sont identifies.
+- Les procedures de retour a l'etat sain sont reproductibles.
+- Le tag Git `v0.13.0` existe.
+
+## `v1.0.0` - Dossier candidature
+
+Objectif: transformer le sandbox en projet presentable en entretien, avec un parcours de demo clair et des limites honnetes.
+
+| Statut | Tache | Preuve attendue |
+| --- | --- | --- |
+| A faire | Ecrire un scenario de demo 15 minutes | README ou `docs/demo.md` |
+| A faire | Ajouter schema architecture final | Diagramme simple et lisible |
+| A faire | Ajouter matrice poste/competences | `docs/interview-positioning.md` ou section README |
+| A faire | Nettoyer la roadmap publique | Statut coherent |
+| A faire | Verifier tags et historique Git | Tags jusqu'a `v1.0.0` |
+| A faire | Verifier confidentialite publique | Pas de notes personnelles ni secrets |
+| A faire | Preparer pitch entretien | Notes privees ignorees |
+
+## Definition of done `v1.0.0`
+
+`v1.0.0` sera consideree complete quand:
+
+- Le projet peut etre clone, lance et compris par un lecteur externe.
+- Une demo courte couvre API, observabilite, Kubernetes, backend reel et validation.
+- Les limites sont explicites: pas de production reelle, mais une trajectoire claire.
+- Le tag Git `v1.0.0` existe.
 
 ## Comment je pense
 
